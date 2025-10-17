@@ -11,10 +11,10 @@ class Client extends Model
 
     // Champs pouvant être remplis en masse
     protected $fillable = [
-        'nom',
+        'name',
         'email',
-        'telephone',
-        'adresse'
+        'phone',
+        'address'
     ];
 
     /**
@@ -24,5 +24,9 @@ class Client extends Model
     {
         return $this->hasMany(Intervention::class);
     }
-}
+    public function activeInterventions()
+    {
+        return $this->hasMany(Intervention::class)->where('status', '!=', 'completed');
+    }
 
+}

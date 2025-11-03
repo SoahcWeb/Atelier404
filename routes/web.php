@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\InterventionController;
+use App\Http\Controllers\ClientController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,13 +16,12 @@ use App\Http\Controllers\InterventionController;
 */
 
 // 🏠 Page d’accueil → redirige vers la liste des interventions
-Route::get('/', function () {
-    return redirect()->route('interventions.index');
-});
+Route::get('/', [ClientController::class, 'index'])->name('client.index');
 
+Route::post('/interventions/store', [InterventionController::class, 'store'])->name('interventions.store');
 // 📋 Liste des interventions
-Route::get('/interventions', [InterventionController::class, 'index'])
-    ->name('interventions.index');
+Route::get('/interventions', [InterventionController::class, 'index'])->name('interventions.index');
+
 
 // 🧭 Tableau de bord (nécessite authentification et vérification)
 Route::get('/dashboard', function () {
@@ -33,6 +33,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::resource('clients', ClientController::class)->except(['index']);
+
+    Route::resource('interventions', InterventionController::class)->except(['index', 'store']);
 });
 
 // 🔐 Auth routes (login, register, forgot password, etc.)

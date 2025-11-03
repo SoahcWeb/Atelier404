@@ -18,9 +18,10 @@ use App\Http\Controllers\ClientController;
 // 🏠 Page d’accueil → redirige vers la liste des interventions
 Route::get('/', [ClientController::class, 'index'])->name('client.index');
 
+Route::post('/interventions/store', [InterventionController::class, 'store'])->name('interventions.store');
 // 📋 Liste des interventions
-Route::get('/interventions', [InterventionController::class, 'index'])
-    ->name('interventions.index');
+Route::get('/interventions', [InterventionController::class, 'index'])->name('interventions.index');
+
 
 // 🧭 Tableau de bord (nécessite authentification et vérification)
 Route::get('/dashboard', function () {
@@ -34,6 +35,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('clients', ClientController::class)->except(['index']);
+
+    Route::resource('interventions', InterventionController::class)->except(['index', 'store']);
 });
 
 // 🔐 Auth routes (login, register, forgot password, etc.)

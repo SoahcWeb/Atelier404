@@ -34,7 +34,7 @@
             Formulaire de Contact et Demande d'Intervention
         </h2>
 
-        <form action="{{ url('/submit-intervention') }}" method="POST" class="space-y-6">
+        <form action="{{ route('interventions.store') }}" method="POST" class="space-y-6">
             @csrf
 
             <div class="grid sm:grid-cols-2 gap-6">
@@ -69,13 +69,6 @@
             <div>
                 <label for="description_probleme" class="block text-sm font-medium text-gray-700">Description Détaillée du Problème</label>
                 <textarea name="description_probleme" id="description_probleme" rows="4" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Décrivez en détail la panne, le dommage ou le service souhaité..."></textarea>
-            </div>
-
-            <div class="p-4 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-700 rounded-md">
-                <p class="font-bold">⚠️ Rappel (Logique Serveur)</p>
-                <p class="text-sm">
-                    La création automatique d'un client et d'une intervention est gérée par le script côté serveur (`/submit-intervention`).
-                </p>
             </div>
 
             <div>

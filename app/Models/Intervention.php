@@ -15,16 +15,16 @@ class Intervention extends Model
         'client_id',
         'user_id',
         'description',
-        'type_appareil',
-        'priorite',
-        'statut',
-        'date_prevue',
+        'device_type',
+        'priority',
+        'status',
+        'scheduled_at',
         'notes',
     ];
 
     protected $casts = [
-        'priorite' => PrioriteEnum::class,
-        'statut' => StatutEnum::class,
+        'priority' => PrioriteEnum::class,
+        'status' => StatutEnum::class,
     ];
 
     public function client()

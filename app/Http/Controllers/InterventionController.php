@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PrioriteEnum;
 use App\Models\Intervention;
 use App\Http\Requests\StoreInterventionRequest;
 use App\Models\Client;
+use App\Enums\StatutEnum;
 
 class InterventionController extends Controller
 {
@@ -32,39 +34,28 @@ class InterventionController extends Controller
 
     public function store(StoreInterventionRequest $request)
     {
-        // 1. Récupération des données validées
+
         $validated = $request->validated();
 
-        // 2. LOGIQUE DU CLIENT : Création si nouveau, Récupération si existant (SANS MODIFICATION)
-
-        // Les critères de recherche sont l'email (unique pour identifier le client).
         $client = Client::firstOrCreate(
             ['email' => $validated['email']],
             [
-                // Les attributs de création (utilisés SEULEMENT si le client est nouveau)
-                'name' => $validated['name'],
-                'phone' => $validated['phone'],
+
+                'name' => $validated['nom'],
+                'phone' => $validated['telephone'],
             ]
         );
 
-        // 3. Préparation des données pour l'Intervention
-        // Nettoyage de l'array validé pour ne garder que les champs de l'Intervention.
-        $interventionData = array_diff_key($validated, array_flip(['nom', 'email', 'telephone']));
-
-        // 4. Création de l'Intervention et Association au Client
-
         $intervention = $client->interventions()->create([
-            'type_appareil' => $interventionData['appareil'],
-            'description' => $interventionData['description_probleme'],
-            'status' => 'pending', // Statut initial
-            // ... autres champs
-        ]);
-
-        // 5. Redirection et Instructions
+        'device_type' => $validated['appareil'],
+        'description' => $validated['description_probleme'],
+        'status' => StatutEnum::Nouvelle,
+        'priority' => PrioriteEnum::Basse,
+    ]);
 
         $message = '';
         if ($client->wasRecentlyCreated) {
-            $message = 'Votre compte client a été créé et votre demande est enregistrée. Veuillez vérifier votre email pour finaliser l\'accès à votre espace client et suivre l\'intervention.';
+            $message = 'Votre compte client a été créé et votre demande est enregistrée. Connectez-vous à votre espace client pour suivre le dossier.';
         } else {
             $message = 'Nous avons bien enregistré votre nouvelle demande d\'intervention. Connectez-vous à votre espace client pour suivre le dossier.';
         }
@@ -85,7 +76,7 @@ class InterventionController extends Controller
         $intervention->update([
             'type_appareil' => $validated['appareil'],
             'description' => $validated['description_probleme'],
-            // ... autres champs
+
         ]);
 
         return redirect()->route('interventions.show', $intervention)->with('success', 'Intervention mise à jour avec succès.');

@@ -20,8 +20,6 @@ return new class extends Migration
             $table->string('priority');
             $table->string('status');
             $table->datetime('scheduled_at')->nullable();
-            $table->datetime("created_at");
-            $table->datetime("update_at");
             $table->timestamps();
 
             $table->foreign('client_id')

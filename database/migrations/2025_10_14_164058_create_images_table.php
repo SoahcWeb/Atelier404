@@ -16,8 +16,6 @@ return new class extends Migration
             $table->unsignedBigInteger("intervention_id")->index();
             $table->text("path");
             $table->string("thumbnail_path");
-            $table->datetime("created_at");
-            $table->datetime("updated_at");
             $table->timestamps();
 
             $table->foreign('intervention_id')->references('id')->on('interventions')->onDelete('cascade');

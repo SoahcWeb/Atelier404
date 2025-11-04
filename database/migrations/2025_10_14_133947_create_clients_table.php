@@ -17,8 +17,6 @@ return new class extends Migration
             $table->string("email", 150)->unique();
             $table->string("phone", 20)->nullable();
             $table->string("address", 200)->nullable();
-            $table->datetime("created_at")->nullable();
-            $table->datetime("update_at")->nullable();
             $table->timestamps();
         });
     }

@@ -29,7 +29,7 @@ return new class extends Migration
 
             $table->foreign('technician_id')
                   ->references('id')
-                  ->on('technicians')
+                  ->on('users')
                   ->onDelete('set null');
         });
     }

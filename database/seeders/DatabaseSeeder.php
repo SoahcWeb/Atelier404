@@ -16,11 +16,11 @@ class DatabaseSeeder extends Seeder
             'name' => 'Admin Principal',
             'email' => 'admin@atelier404.local',
             'password' => bcrypt('admin123'),
-            'role' => 'Admin',
+            'role' => 'admin',
         ]);
 
         // Création de techniciens
-        User::factory(5)->create(['role' => 'Technicien']);
+        User::factory(5)->create(['role' => 'technician']);
 
         // Création de clients et interventions associées
         Client::factory(10)

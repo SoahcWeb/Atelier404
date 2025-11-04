@@ -9,12 +9,12 @@ User::create([
     'name' => 'Admin',
     'email' => 'admin@atelier404.local',
     'password' => Hash::make('admin123'),
-    'role' => 'Admin'
+    'role' => 'admin'
 ]);
 
 User::create([
     'name' => 'Jesus',
     'email' => 'jesus@atelier404.local',
     'password' => Hash::make('jesus123'),
-    'role' => 'Technicien'
+    'role' => 'technician'
 ]);

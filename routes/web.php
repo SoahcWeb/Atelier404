@@ -34,7 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::resource('clients', ClientController::class)->except(['index']);
+    Route::resource('client', ClientController::class)->except(['index']);
 
     Route::resource('interventions', InterventionController::class)->except(['index', 'store']);
 });

@@ -10,25 +10,16 @@
                 <p class="text-gray-600 mb-4">
                     Bienvenue à l'Atelier 404. Nous sommes spécialisés dans le diagnostic et la réparation de tous types d'appareils électroniques.
                 </p>
-                <div>
-                    <form action="{{ route('client.show') }}" method="POST" class="space-y-6">
-                        @csrf
-                        <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                            Client Espace Connexion 📲
-                        </button>
-                    </form>
-                     <form action="{{ route('technicien.index') }}" method="POST" class="space-y-6">
-                        @csrf
-                        <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                            Technicien Espace Connexion 🛠  ️
-                        </button>
-                    </form>
-                     <form action="{{ route('administrateur.index') }}" method="POST" class="space-y-6">
-                        @csrf
-                        <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
-                            Administrateur Espace Connexion  🔐
-                        </button>
-                    </form>
+                <div class="space-y-4">
+
+                    <a href="{{ route('login') }}" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        Client Espace Connexion 📲
+                    </a>
+
+                    <a href="{{ route('dashboard') }}" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        Technicien Espace Connexion 🛠
+                    </a>
+
                 </div>
             </div>
 

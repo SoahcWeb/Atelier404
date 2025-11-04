@@ -12,12 +12,12 @@ class InterventionFactory extends Factory
     {
         return [
             'client_id' => Client::factory(),
-            'user_id' => User::inRandomOrder()->where('role', 'Technicien')->first()?->id ?? User::factory()->create(['role' => 'Technicien'])->id,
+            'technician_id' => User::inRandomOrder()->where('role', 'technician')->first()?->id ?? User::factory()->create(['role' => 'technician'])->id,
             'description' => $this->faker->sentence(10),
-            'type_appareil' => $this->faker->randomElement(['PC', 'Smartphone', 'Tablette', 'Imprimante']),
-            'priorite' => $this->faker->randomElement(['basse', 'normale', 'haute']),
-            'statut' => $this->faker->randomElement(['nouvelle', 'diagnostic', 'en_reparation', 'termine', 'non_reparable']),
-            'date_prevue' => $this->faker->dateTimeBetween('now', '+15 days'),
+            'device_type' => $this->faker->randomElement(['PC', 'Smartphone', 'Tablette', 'Imprimante']),
+            'priority' => $this->faker->randomElement(['basse', 'normale', 'haute']),
+            'status' => $this->faker->randomElement(['nouvelle', 'diagnostic', 'en_reparation', 'termine', 'non_reparable']),
+            'scheduled_at' => $this->faker->dateTimeBetween('now', '+15 days'),
             'notes' => $this->faker->optional()->paragraph(),
         ];
     }

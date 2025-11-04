@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('device_type');
             $table->string('priority');
             $table->string('status');
+            $table->text('notes')->nullable();
             $table->datetime('scheduled_at')->nullable();
             $table->timestamps();
 

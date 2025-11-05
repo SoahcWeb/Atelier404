@@ -13,12 +13,12 @@ class Intervention extends Model
 
     protected $fillable = [
         'client_id',
-        'user_id',
+        'technician_id',
         'description',
-        'type_appareil',
-        'priorite',
-        'statut',
-        'date_prevue',
+        'device_type',
+        'priority',
+        'status',
+        'scheduled_at',
         'notes',
     ];
 

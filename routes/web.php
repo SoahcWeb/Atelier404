@@ -16,7 +16,9 @@ use App\Http\Controllers\ClientController;
 */
 
 // 🏠 Page d’accueil → redirige vers la liste des interventions
-Route::get('/', [ClientController::class, 'index'])->name('client.index');
+Route::get('/', function () {
+    return view('homepage');
+});
 
 Route::post('/interventions/store', [InterventionController::class, 'store'])->name('interventions.store');
 // 📋 Liste des interventions
@@ -34,7 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::resource('clients', ClientController::class)->except(['index']);
+    Route::resource('clients', ClientController::class);
 
     Route::resource('interventions', InterventionController::class)->except(['index', 'store']);
 });

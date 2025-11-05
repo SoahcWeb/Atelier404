@@ -64,13 +64,13 @@ class InterventionController extends Controller
 
         $message = '';
         if ($client->wasRecentlyCreated) {
-            $message = 'Votre compte client a été créé et votre demande est enregistrée. Veuillez vérifier votre email pour finaliser l\'accès à votre espace client et suivre l\'intervention.';
+            $message = 'Votre compte client a été créé et votre demande est enregistrée. Connectez-vous à votre espace client pour suivre le dossier.';
         } else {
             $message = 'Nous avons bien enregistré votre nouvelle demande d\'intervention. Connectez-vous à votre espace client pour suivre le dossier.';
         }
 
 
-        return redirect()->route('client.index')->with('success', $message);
+        return redirect()->route('homepage')->with('success', $message);
     }
 
     public function edit(Intervention $intervention)

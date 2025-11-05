@@ -38,7 +38,12 @@
     </div>
 
     <div id="contact" class="bg-white p-8 rounded-lg shadow-xl">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-6 border-b pb-2">
+        @if (session('success'))
+            <div class="mb-6 p-4 rounded-lg bg-green-100 border border-green-400 text-green-800">
+                {{ session('success') }}
+            </div>
+        @endif
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6 border-b pb-2">
             Formulaire de Contact et Demande d'Intervention
         </h2>
 

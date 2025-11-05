@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('client_id');
             $table->unsignedBigInteger('technician_id')->nullable();
             $table->text('description');
+            $table->text('notes')->nullable();
             $table->string('device_type');
             $table->string('priority');
             $table->string('status');

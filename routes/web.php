@@ -15,10 +15,10 @@ use App\Http\Controllers\ClientController;
 |
 */
 
-// 🏠 Page d’accueil → redirige vers la liste des interventions
+// 🏠 Page d’accueil
 Route::get('/', function () {
     return view('homepage');
-});
+})->name('homepage');
 
 Route::post('/interventions/store', [InterventionController::class, 'store'])->name('interventions.store');
 // 📋 Liste des interventions

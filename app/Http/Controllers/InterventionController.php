@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PrioriteEnum;
+use App\Enums\StatutEnum;
 use App\Models\Intervention;
 use App\Http\Requests\StoreInterventionRequest;
 use App\Models\Client;
@@ -42,21 +44,16 @@ class InterventionController extends Controller
             ['email' => $validated['email']],
             [
                 // Les attributs de création (utilisés SEULEMENT si le client est nouveau)
-                'name' => $validated['name'],
-                'phone' => $validated['phone'],
+                'name' => $validated['nom'],
+                'phone' => $validated['telephone'],
             ]
         );
 
-        // 3. Préparation des données pour l'Intervention
-        // Nettoyage de l'array validé pour ne garder que les champs de l'Intervention.
-        $interventionData = array_diff_key($validated, array_flip(['nom', 'email', 'telephone']));
-
-        // 4. Création de l'Intervention et Association au Client
-
         $intervention = $client->interventions()->create([
-            'type_appareil' => $interventionData['appareil'],
-            'description' => $interventionData['description_probleme'],
-            'status' => 'pending', // Statut initial
+            'device_type' => $validated['appareil'],
+            'description' => $validated['description_probleme'],
+            'status' => StatutEnum::Nouvelle,
+            'priority' => PrioriteEnum::Basse,
             // ... autres champs
         ]);
 

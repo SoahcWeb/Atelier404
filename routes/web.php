@@ -21,8 +21,15 @@ Route::get('/', function () {
 })->name('homepage');
 
 Route::post('/interventions/store', [InterventionController::class, 'store'])->name('interventions.store');
-// 📋 Liste des interventions
-Route::get('/interventions', [InterventionController::class, 'index'])->name('interventions.index');
+
+
+// ⚠️ Uniquement pour les tests — à déplacer plus tard dans une route protégée ⚠️
+// Espace client
+Route::get('/espace-client', [ClientController::class, 'dashboard'])->name('client.dashboard');
+
+// Espace technicien / admin
+Route::get('/espace-tech', [InterventionController::class, 'dashboard'])->name('interventions.dashboard');
+
 
 
 // 🧭 Tableau de bord (nécessite authentification et vérification)

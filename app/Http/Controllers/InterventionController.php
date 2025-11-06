@@ -7,6 +7,7 @@ use App\Enums\StatutEnum;
 use App\Models\Intervention;
 use App\Http\Requests\StoreInterventionRequest;
 use App\Models\Client;
+use App\Models\User;
 
 class InterventionController extends Controller
 {
@@ -93,6 +94,39 @@ class InterventionController extends Controller
         $intervention->delete();
 
         return redirect()->route('interventions.index')->with('success', 'Intervention supprimée avec succès.');
+    }
+
+    public function dashboard()
+    {
+        // $user = auth()->user();
+        // if ($user->role === 'admin') {
+        //     $interventions = Intervention::all();
+        // }
+        // elseif ($user->role === 'technician') {
+        //     $interventions = Intervention::where('technician_id', $user->id)
+        //     ->whith(['client'])
+        //     ->get();
+        // }
+        // else {
+        //     abort(403, 'Accès non autorisé.');
+        // }
+
+        // return view('interventions.index', compact('interventions'));
+
+         $user = User::find(1); // Pour les tests uniquement
+        if ($user->role === 'admin') {
+            $interventions = Intervention::all();
+        }
+        elseif ($user->role === 'technician') {
+            $interventions = Intervention::where('technician_id', $user->id)
+            ->with(['client'])
+            ->get();
+        }
+        else {
+            abort(403, 'Accès non autorisé.');
+        }
+
+        return view('interventions.index', compact('interventions','user'));
     }
 }
 

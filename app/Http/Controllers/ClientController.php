@@ -38,7 +38,7 @@ class ClientController extends Controller
      */
     public function show(Client $client)
     {
-       
+
     }
 
     /**
@@ -63,5 +63,25 @@ class ClientController extends Controller
     public function destroy(Client $client)
     {
         //
+    }
+
+    public function dashboard()
+    {
+        // $user = auth()->user();
+        // $client = $user->client;
+        // $interventions = $user->client->interventions;
+
+        // return view('client.index', compact('interventions'));
+
+            // ⚠️ Uniquement pour les tests — à déplacer plus tard dans une route protégée ⚠️
+        $client = \App\Models\Client::first();
+        $interventions = $client->interventions;
+
+        if (!$client) {
+            return redirect()->route('homepage')->with('error', 'Aucun client trouvé dans la base de données.');
+        }
+
+        return view('client.index', compact('client','interventions'));
+
     }
 }

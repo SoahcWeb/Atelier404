@@ -1,54 +1,37 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Liste des interventions - Atelier404</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100 text-gray-800">
-    <div class="max-w-7xl mx-auto p-6">
-        <h1 class="text-3xl font-bold mb-6 text-center">📋 Liste des interventions</h1>
+<x-app-layout title="Espace Technique">
 
-        <table class="w-full bg-white shadow-lg rounded-lg overflow-hidden">
-            <thead class="bg-gray-200">
-                <tr>
-                    <th class="px-4 py-2 text-left">#</th>
-                    <th class="px-4 py-2 text-left">Client</th>
-                    <th class="px-4 py-2 text-left">Technicien</th>
-                    <th class="px-4 py-2 text-left">Type d’appareil</th>
-                    <th class="px-4 py-2 text-left">Priorité</th>
-                    <th class="px-4 py-2 text-left">Statut</th>
-                    <th class="px-4 py-2 text-left">Date prévue</th>
+    <h1 class="text-2xl font-bold text-indigo-700 mb-6">
+        @if($user->role === 'admin')
+            Tableau de Bord Administrateur
+        @else
+            Mes Interventions {{ $user->name }}
+        @endif
+    </h1>
+
+    <table class="w-full border text-sm text-gray-700">
+        <thead class="bg-gray-100">
+            <tr>
+                <th class="p-2 text-left">Client</th>
+                <th class="p-2 text-left">Type d'appareil</th>
+                <th class="p-2 text-left">Statut</th>
+                <th class="p-2 text-left">Technicien</th>
+                <th class="p-2 text-left">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($interventions as $intervention)
+                <tr class="border-t">
+                    <td class="p-2">{{ $intervention->client->name }}</td>
+                    <td class="p-2">{{ $intervention->device_type }}</td>
+                    <td class="p-2">{{ $intervention->status }}</td>
+                    <td class="p-2">{{ $intervention->technicien->name ?? 'Non assigné' }}</td>
+                    <td class="p-2">
+                        <a href="{{ route('interventions.show', $intervention) }}"
+                           class="text-indigo-600 hover:underline">Voir</a>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @forelse ($interventions as $intervention)
-                    <tr class="border-t hover:bg-gray-50">
-                        <td class="px-4 py-2">{{ $intervention->id }}</td>
-                        <td class="px-4 py-2">{{ $intervention->client->prenom ?? '—' }} {{ $intervention->client->nom ?? '' }}</td>
-                        <td class="px-4 py-2">{{ $intervention->technicien->name ?? 'Non assigné' }}</td>
-                        <td class="px-4 py-2">{{ ucfirst($intervention->type_appareil) }}</td>
-                        <td class="px-4 py-2">
-                            <span class="@if($intervention->priorite == 'haute') text-red-600 font-bold
-                                         @elseif($intervention->priorite == 'basse') text-green-600
-                                         @else text-yellow-600 @endif">
-                                {{ ucfirst($intervention->priorite) }}
-                            </span>
-                        </td>
-                        <td class="px-4 py-2">{{ ucfirst(str_replace('_', ' ', $intervention->statut)) }}</td>
-                        <td class="px-4 py-2">{{ $intervention->date_prevue ?? '—' }}</td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="7" class="text-center py-4 text-gray-500">Aucune intervention enregistrée</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+            @endforeach
+        </tbody>
+    </table>
 
-        <div class="text-center mt-8">
-            <a href="/" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">🏠 Retour à l’accueil</a>
-        </div>
-    </div>
-</body>
-</html>
+</x-app-layout>

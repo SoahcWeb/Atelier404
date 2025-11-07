@@ -9,11 +9,10 @@ class ClientFactory extends Factory
     public function definition(): array
     {
         return [
-            'nom' => $this->faker->lastName(),
-            'prenom' => $this->faker->firstName(),
+            'name' => $this->faker->lastName(),
             'email' => $this->faker->unique()->safeEmail(),
-            'telephone' => $this->faker->phoneNumber(),
-            'adresse' => $this->faker->address(),
+            'phone' => $this->faker->phoneNumber(),
+            'address' => $this->faker->address(),
         ];
     }
 }

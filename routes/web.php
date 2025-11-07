@@ -22,15 +22,13 @@ Route::get('/', function () {
 
 Route::post('/interventions/store', [InterventionController::class, 'store'])->name('interventions.store');
 
+Route::middleware('auth')->group(function () {
+    // Espace client
+    Route::get('/espace-client', [ClientController::class, 'dashboard'])->name('client.dashboard');
 
-// ⚠️ Uniquement pour les tests — à déplacer plus tard dans une route protégée ⚠️
-// Espace client
-Route::get('/espace-client', [ClientController::class, 'dashboard'])->name('client.dashboard');
-
-// Espace technicien / admin
-Route::get('/espace-tech', [InterventionController::class, 'dashboard'])->name('interventions.dashboard');
-
-
+    // Espace technicien / admin
+    Route::get('/espace-tech', [InterventionController::class, 'dashboard'])->name('interventions.dashboard');
+});
 
 // 🧭 Tableau de bord (nécessite authentification et vérification)
 Route::get('/dashboard', function () {

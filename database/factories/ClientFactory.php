@@ -9,8 +9,7 @@ class ClientFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->lastName(),
-            'email' => $this->faker->unique()->safeEmail(),
+            'user_id' => \App\Models\User::factory(),
             'phone' => $this->faker->phoneNumber(),
             'address' => $this->faker->address(),
         ];

@@ -8,6 +8,8 @@ use App\Models\Intervention;
 use App\Http\Requests\StoreInterventionRequest;
 use App\Models\Client;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class InterventionController extends Controller
 {
@@ -38,15 +40,22 @@ class InterventionController extends Controller
         // 1. Récupération des données validées
         $validated = $request->validated();
 
-        // 2. LOGIQUE DU CLIENT : Création si nouveau, Récupération si existant (SANS MODIFICATION)
-
-        // Les critères de recherche sont l'email (unique pour identifier le client).
-        $client = Client::firstOrCreate(
+        // 2. Gestion du client (création ou récupération)
+        $user = User::firstOrCreate(
             ['email' => $validated['email']],
             [
                 // Les attributs de création (utilisés SEULEMENT si le client est nouveau)
                 'name' => $validated['nom'],
+                'password' => Hash::make(Str::random(12)), // Mot de passe par défaut à changer
                 'phone' => $validated['telephone'],
+            ]
+        );
+
+        $client = Client::firstOrCreate(
+            ['user_id' => $user->id],
+            [
+                'phone' => $validated['telephone'],
+                'adresse' => $validated['address'] ?? null,// Valeur par défaut
             ]
         );
 
@@ -96,38 +105,7 @@ class InterventionController extends Controller
         return redirect()->route('interventions.index')->with('success', 'Intervention supprimée avec succès.');
     }
 
-    public function dashboard()
-    {
-        // $user = auth()->user();
-        // if ($user->role === 'admin') {
-        //     $interventions = Intervention::all();
-        // }
-        // elseif ($user->role === 'technician') {
-        //     $interventions = Intervention::where('technician_id', $user->id)
-        //     ->whith(['client'])
-        //     ->get();
-        // }
-        // else {
-        //     abort(403, 'Accès non autorisé.');
-        // }
-
-        // return view('interventions.index', compact('interventions'));
-
-         $user = User::find(1); // Pour les tests uniquement
-        if ($user->role === 'admin') {
-            $interventions = Intervention::all();
-        }
-        elseif ($user->role === 'technician') {
-            $interventions = Intervention::where('technician_id', $user->id)
-            ->with(['client'])
-            ->get();
-        }
-        else {
-            abort(403, 'Accès non autorisé.');
-        }
-
-        return view('interventions.index', compact('interventions','user'));
-    }
+   
 }
 
 

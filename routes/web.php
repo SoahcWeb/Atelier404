@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\InterventionController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,13 +25,11 @@ Route::post('/interventions/store', [InterventionController::class, 'store'])->n
 
 Route::middleware('auth')->group(function () {
     // Espace client
-    Route::get('/espace-client', [ClientController::class, 'dashboard'])->name('client.dashboard');
+    Route::get('/espace-client', [DashboardController::class, 'dashboard'])->name('client.dashboard');
 
     // Espace technicien / admin
-    Route::get('/espace-tech', [InterventionController::class, 'dashboard'])->name('interventions.dashboard');
+    Route::get('/espace-tech', [DashboardController::class, 'dashboard'])->name('interventions.dashboard');
 });
-
-// 🧭 Tableau de bord (nécessite authentification et vérification)
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

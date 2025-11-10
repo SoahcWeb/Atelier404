@@ -1,11 +1,11 @@
 <x-app-layout title="Espace Client">
 
-    <h1 class="text-2xl font-bold text-indigo-700 mb-6">Bienvenue, {{ $client->name }}</h1>
+    <h1 class="text-2xl font-bold text-indigo-700 mb-6">Bienvenue, {{ $user->name }}</h1>
 
     <div class="bg-white shadow-md rounded-lg p-6 mb-8">
         <h2 class="text-xl font-semibold text-gray-700 mb-4">Vos Informations Personnelles</h2>
         <ul class="text-gray-600">
-            <li><strong>Email :</strong> {{ $client->email }}</li>
+            <li><strong>Email :</strong> {{ $user->email }}</li>
             <li><strong>Téléphone :</strong> {{ $client->phone }}</li>
             <li><strong>Adresse :</strong> {{ $client->address ?? 'Non renseignée' }}</li>
         </ul>

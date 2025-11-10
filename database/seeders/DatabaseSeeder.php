@@ -16,19 +16,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(RolesTableSeeder::class);
         $this->call(UserSeeder::class);
-
-
-        // Création de clients et interventions associées
-        Client::create([
-                'name' => 'client',
-                'email' => 'client@atelier404.local',
-                'phone' => '0123456789',
-                
-        ]);
-
-        Client::factory(10)
-            ->has(Intervention::factory()->count(3))
-            ->create();
+        $this->call(InterventionSeeder::class);
     }
-}
 
+}

@@ -43,11 +43,11 @@
                 {{ session('success') }}
             </div>
         @endif
-                <h2 class="text-2xl font-semibold text-gray-800 mb-6 border-b pb-2">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6 border-b pb-2">
             Formulaire de Contact et Demande d'Intervention
         </h2>
 
-        <form action="{{ route('interventions.store') }}" method="POST" class="space-y-6">
+        <form action="{{ route('interventions.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
 
             <div class="grid sm:grid-cols-2 gap-6">
@@ -85,11 +85,31 @@
             </div>
 
             <div>
+                <label for="images" class="block text-sm font-medium text-gray-700">Ajouter des images (max 3)</label>
+                <input type="file" name="images[]" id="images" multiple accept="image/*" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div>
                 <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
                     Envoyer la Demande et Créer l'Intervention
                 </button>
             </div>
         </form>
+
+        @if(auth()->user() && auth()->user()->client)
+            <h2 class="text-xl font-semibold mt-8 mb-4">Vos Interventions</h2>
+            <div class="grid sm:grid-cols-2 gap-4">
+                @foreach(auth()->user()->client->interventions()->with('images')->get() as $intervention)
+                    <div class="p-4 border rounded shadow">
+                        <p class="font-medium mb-2">Problème : {{ $intervention->description }}</p>
+                        @foreach($intervention->images as $image)
+                            <img src="{{ asset('storage/' . $image->filename) }}" alt="Image intervention" class="mb-2 w-32 h-32 object-cover">
+                        @endforeach
+                    </div>
+                @endforeach
+            </div>
+        @endif
+
     </div>
 
 </x-app-layout>

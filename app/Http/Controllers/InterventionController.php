@@ -11,13 +11,38 @@ use App\Http\Requests\StoreInterventionRequest;
 
 class InterventionController extends Controller
 {
-    // Page d'accueil avec formulaire et affichage images
-    public function create()
+    /**
+     * Affiche la liste des interventions (pour admin ou technicien).
+     */
+    public function index()
     {
-        return view('home'); // ta page d'accueil avec le formulaire
+        $interventions = Intervention::with(['client', 'technicien', 'images'])->get();
+        return view('interventions.index', compact('interventions'));
     }
 
-    // Stockage d'une intervention avec images
+    /**
+     * Affiche les détails d'une intervention spécifique.
+     */
+    public function show(Intervention $intervention)
+    {
+        return view('interventions.show', compact('intervention'));
+    }
+
+    /**
+     * Affiche le formulaire de création d’une intervention.
+     */
+    public function create()
+    {
+        // Si tu veux rediriger vers une page de création séparée :
+        // return view('interventions.create');
+
+        // Si ton formulaire est sur la page d’accueil :
+        return view('home');
+    }
+
+    /**
+     * Enregistre une nouvelle intervention avec gestion des images.
+     */
     public function store(StoreInterventionRequest $request)
     {
         $validated = $request->validated();
@@ -44,12 +69,11 @@ class InterventionController extends Controller
             $images = array_slice($request->file('images'), 0, 3);
             foreach ($images as $image) {
                 $filename = $image->store('interventions', 'public');
-                $intervention->images()->create([
-                    'filename' => $filename
-                ]);
+                $intervention->images()->create(['filename' => $filename]);
             }
         }
 
+        // Message de confirmation
         $message = $client->wasRecentlyCreated
             ? 'Votre compte client a été créé et votre demande est enregistrée. Connectez-vous à votre espace client pour suivre le dossier.'
             : 'Nous avons bien enregistré votre nouvelle demande d\'intervention. Connectez-vous à votre espace client pour suivre le dossier.';
@@ -57,26 +81,17 @@ class InterventionController extends Controller
         return redirect()->route('homepage')->with('success', $message);
     }
 
-    // (Optionnel) Liste complète des interventions pour admin
-    public function index()
-    {
-        $interventions = Intervention::with(['client', 'technicien', 'images'])->get();
-        return view('interventions.index', compact('interventions'));
-    }
-
-    // (Optionnel) Détails d'une intervention
-    public function show(Intervention $intervention)
-    {
-        return view('interventions.show', compact('intervention'));
-    }
-
-    // (Optionnel) Edition
+    /**
+     * Édition d'une intervention.
+     */
     public function edit(Intervention $intervention)
     {
         return view('interventions.edit', compact('intervention'));
     }
 
-    // (Optionnel) Mise à jour
+    /**
+     * Mise à jour d'une intervention.
+     */
     public function update(StoreInterventionRequest $request, Intervention $intervention)
     {
         $validated = $request->validated();
@@ -90,12 +105,14 @@ class InterventionController extends Controller
             ->with('success', 'Intervention mise à jour avec succès.');
     }
 
-    // (Optionnel) Suppression
+    /**
+     * Suppression d'une intervention.
+     */
     public function destroy(Intervention $intervention)
     {
         $intervention->delete();
+
         return redirect()->route('interventions.index')
             ->with('success', 'Intervention supprimée avec succès.');
     }
 }
-

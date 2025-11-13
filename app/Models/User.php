@@ -52,4 +52,14 @@ class User extends Authenticatable
     {
         return $this->hasOne(Client::class);
     }
+
+    public function interventionsAsClient()
+    {
+        return $this->hasMany(Intervention::class, 'client_id');
+    }
+
+    public function interventionsAsTechnician()
+    {
+        return $this->hasMany(Intervention::class, 'technician_id');
+    }
 }

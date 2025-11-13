@@ -11,6 +11,7 @@ class Client extends Model
 
     // Champs pouvant être remplis en masse
     protected $fillable = [
+        'user_id',
         'name',
         'email',
         'phone',

@@ -4,17 +4,61 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Seeder;
+use App\Models\Role;
+use App\Models\Client;
 
-User::create([
-    'name' => 'Admin',
-    'email' => 'admin@atelier404.local',
-    'password' => Hash::make('admin123'),
-    'role' => 'Admin'
-]);
+class UserSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
 
-User::create([
-    'name' => 'Jesus',
-    'email' => 'jesus@atelier404.local',
-    'password' => Hash::make('jesus123'),
-    'role' => 'Technicien'
-]);
+        User::create([
+            'name' => 'Admin',
+            'email' => 'admin@atelier404.local',
+            'password' => Hash::make('admin123'),
+            'role_id' => 1,
+        ]);
+
+        User::create([
+            'name' => 'Jesus',
+            'email' => 'jesus@atelier404.local',
+            'password' => Hash::make('jesus123'),
+            'role_id' => 2,
+        ]);
+
+        $clientRoleId = Role::where('name', 'Client')->first()->id;
+
+        $testClient = User::create([
+            'name' => 'ClienteTest',
+            'email' => 'client@test.com',
+            'password' => Hash::make('client123'),
+            'role_id' => $clientRoleId,
+        ]);
+
+
+        Client::create([
+            'user_id' => $testClient->id,
+            'phone' => '123456789',
+            'address' => 'Calle de prueba 123',
+        ]);
+
+
+        User::factory(5)->create([
+                    'role_id' => Role::where('name', Role::TECHNICIAN)->first()->id,
+                ]);
+
+        User::factory(10)->create([
+                    'role_id' => Role::where('name', Role::CLIENT)->first()->id,
+                ])->each(function ($user) {
+                    Client::create([
+                        'user_id' => $user->id,
+                        'phone' => fake()->phoneNumber(),
+                        'address' => fake()->address(),
+                    ]);
+                });
+            }
+}

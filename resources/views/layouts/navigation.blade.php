@@ -12,8 +12,14 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
+                    <x-nav-link :href="auth()->check()
+                        ? (auth()->user()->role->name === 'client' ? route('client.dashboard')
+                        : (auth()->user()->role->name === 'technician' || auth()->user()->role->name === 'admin'
+                        ? route('interventions.dashboard')
+                        : route('homepage')))
+                        : route('login')"
+                    :active="request()->routeIs('dashboard')">
+                        {{ __('Espace Connexion') }}
                     </x-nav-link>
                 </div>
             </div>

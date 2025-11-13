@@ -42,4 +42,24 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function client()
+    {
+        return $this->hasOne(Client::class);
+    }
+
+    public function interventionsAsClient()
+    {
+        return $this->hasMany(Intervention::class, 'client_id');
+    }
+
+    public function interventionsAsTechnician()
+    {
+        return $this->hasMany(Intervention::class, 'technician_id');
+    }
 }

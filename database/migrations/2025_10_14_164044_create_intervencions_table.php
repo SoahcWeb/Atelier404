@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('interventions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('client_id');
-            $table->unsignedBigInteger('technician_id')->nullable();
+            $table->foreignId('client_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('technician_id')->nullable()->constrained('users')->onDelete('set null');
             $table->text('description');
             $table->text('notes')->nullable();
             $table->string('device_type');
@@ -23,15 +23,6 @@ return new class extends Migration
             $table->datetime('scheduled_at')->nullable();
             $table->timestamps();
 
-            $table->foreign('client_id')
-                  ->references('id')
-                  ->on('clients')
-                  ->onDelete('cascade');
-
-            $table->foreign('technician_id')
-                  ->references('id')
-                  ->on('users')
-                  ->onDelete('set null');
         });
     }
 

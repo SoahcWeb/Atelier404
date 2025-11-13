@@ -38,7 +38,7 @@ class ClientController extends Controller
      */
     public function show(Client $client)
     {
-       
+
     }
 
     /**
@@ -64,4 +64,6 @@ class ClientController extends Controller
     {
         //
     }
+
+
 }

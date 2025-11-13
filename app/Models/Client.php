@@ -24,5 +24,9 @@ class Client extends Model
     {
         return $this->hasMany(Intervention::class);
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }
 

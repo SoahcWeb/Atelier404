@@ -9,6 +9,11 @@ class Role extends Model
 {
     use HasFactory;
 
+    // Autoriser le mass assignment sur le champ 'name'
+    protected $fillable = [
+        'name',
+    ];
+
     public const CLIENT = 'client';
     public const ADMIN = 'admin';
     public const TECHNICIAN = 'technician';
@@ -26,6 +31,4 @@ class Role extends Model
     {
         return $this->hasMany(User::class);
     }
-
-    
 }

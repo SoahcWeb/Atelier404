@@ -23,13 +23,14 @@ class Intervention extends Model
     ];
 
     protected $casts = [
-        'priorite' => PrioriteEnum::class,
-        'statut' => StatutEnum::class,
+        'priority' => PrioriteEnum::class,
+        'status' => StatutEnum::class,
     ];
 
+    // Corrected relation
     public function client()
     {
-        return $this->belongsTo(User::class, 'client_id');
+        return $this->belongsTo(Client::class, 'client_id');
     }
 
     public function technician()
@@ -37,5 +38,3 @@ class Intervention extends Model
         return $this->belongsTo(User::class, 'technician_id');
     }
 }
-
-

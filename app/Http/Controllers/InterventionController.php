@@ -10,6 +10,7 @@ use App\Models\Client;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use App\Models\Role;
 
 class InterventionController extends Controller
 {
@@ -41,13 +42,12 @@ class InterventionController extends Controller
         $validated = $request->validated();
 
         // 2. Gestion du client (création ou récupération)
-        $user = User::firstOrCreate(
+       $user = User::firstOrCreate(
             ['email' => $validated['email']],
             [
-                // Les attributs de création (utilisés SEULEMENT si le client est nouveau)
                 'name' => $validated['nom'],
-                'password' => Hash::make(Str::random(12)), // Mot de passe par défaut à changer
-                'phone' => $validated['telephone'],
+                'password' => Hash::make(Str::random(12)),
+                'role_id' => Role::where('name', 'Client')->first()->id,
             ]
         );
 
@@ -55,7 +55,7 @@ class InterventionController extends Controller
             ['user_id' => $user->id],
             [
                 'phone' => $validated['telephone'],
-                'adresse' => $validated['address'] ?? null,// Valeur par défaut
+                'address' => $validated['address'] ?? null,// Valeur par défaut
             ]
         );
 
@@ -105,7 +105,7 @@ class InterventionController extends Controller
         return redirect()->route('interventions.index')->with('success', 'Intervention supprimée avec succès.');
     }
 
-   
+
 }
 
 

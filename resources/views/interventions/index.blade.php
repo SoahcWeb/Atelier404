@@ -14,8 +14,9 @@
                 <th class="p-2 text-left">Client</th>
                 <th class="p-2 text-left">Type d'appareil</th>
                 <th class="p-2 text-left">Statut</th>
+                <th class="p-2 text-left">Images</th>
                 @if ($user->role->name === 'admin')
-                <th class="p-2 text-left">Technicien</th>
+                    <th class="p-2 text-left">Technicien</th>
                 @endif
                 <th class="p-2 text-left">Actions</th>
             </tr>
@@ -26,8 +27,28 @@
                     <td class="p-2">{{ $intervention->client->name ?? 'Client inconnu' }}</td>
                     <td class="p-2">{{ $intervention->device_type }}</td>
                     <td class="p-2">{{ $intervention->status }}</td>
+                    <td class="p-2 flex flex-wrap">
+                        @foreach($intervention->images->take(3) as $img)
+                            <div class="relative m-2">
+                                <a href="{{ asset('storage/' . $img->path) }}" target="_blank">
+                                    <img src="{{ asset('storage/' . ($img->thumbnail_path ?? $img->path)) }}"
+                                         alt="Image intervention" class="w-24 h-auto rounded border">
+                                </a>
+                                <form action="{{ route('interventions.images.destroy', $img->id) }}" method="POST"
+                                      class="absolute top-0 right-0">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                            onclick="return confirm('Voulez-vous vraiment supprimer cette image ?');"
+                                            class="bg-red-600 text-white rounded-full w-5 h-5 text-center leading-5 hover:bg-red-700">
+                                        ×
+                                    </button>
+                                </form>
+                            </div>
+                        @endforeach
+                    </td>
                     @if ($user->role->name === 'admin')
-                    <td class="p-2">{{ $intervention->technician->name ?? 'Non assigné' }}</td>
+                        <td class="p-2">{{ $intervention->technician->name ?? 'Non assigné' }}</td>
                     @endif
                     <td class="p-2">
                         <a href="{{ route('interventions.show', $intervention) }}"

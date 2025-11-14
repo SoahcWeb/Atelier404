@@ -27,7 +27,7 @@ class Intervention extends Model
         'status' => StatutEnum::class,
     ];
 
-    // Corrected relation
+    // Relations existantes
     public function client()
     {
         return $this->belongsTo(Client::class, 'client_id');
@@ -36,5 +36,11 @@ class Intervention extends Model
     public function technician()
     {
         return $this->belongsTo(User::class, 'technician_id');
+    }
+
+    // Nouvelle relation : une intervention a plusieurs images
+    public function images()
+    {
+        return $this->hasMany(Image::class);
     }
 }

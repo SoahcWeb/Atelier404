@@ -5,56 +5,57 @@ namespace App\Http\Controllers;
 use App\Enums\PrioriteEnum;
 use App\Enums\StatutEnum;
 use App\Models\Intervention;
-use App\Http\Requests\StoreInterventionRequest;
 use App\Models\Client;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Image;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class InterventionController extends Controller
 {
-    /**
-     * Affiche la liste des interventions.
-     */
     public function index()
     {
-        $interventions = Intervention::with(['client', 'technician'])->get();
+        $interventions = Intervention::with(['client', 'technician', 'images'])->get();
         return view('interventions.index', compact('interventions'));
     }
 
-    /**
-     * Affiche une intervention spécifique.
-     */
     public function show(Intervention $intervention)
     {
-        $intervention->load(['client', 'technician']);
+        $intervention->load(['client', 'technician', 'images']);
         return view('interventions.show', compact('intervention'));
     }
 
-    /**
-     * Formulaire de création d'une intervention.
-     */
     public function create()
     {
         return view('interventions.create');
     }
 
-    /**
-     * Enregistre une nouvelle intervention.
-     */
-    public function store(StoreInterventionRequest $request)
+    public function store(Request $request)
     {
-        $validated = $request->validated();
+        $validated = $request->validate([
+            'nom' => 'required|string|max:100',
+            'email' => 'required|email',
+            'telephone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:200',
+            'appareil' => 'required|string|max:100',
+            'description_probleme' => 'required|string',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:5120',
+        ]);
 
-        // 1️⃣ Vérifier ou créer le rôle "client" (tout en minuscule pour SQLite CHECK constraint)
+        if ($request->hasFile('images') && count($request->file('images')) > 3) {
+            return back()->withErrors(['images' => 'Maximum 3 images autorisées.'])->withInput();
+        }
+
+        // Création / récupération du user + client
         $clientRole = Role::firstOrCreate(['name' => 'client']);
-
-        // 2️⃣ Nom et email du client avec fallback
         $nomClient = trim($validated['nom'] ?? '') ?: 'Client sans nom';
         $emailClient = $validated['email'];
 
-        // 3️⃣ Créer ou récupérer l'utilisateur Client
         $user = User::firstOrCreate(
             ['email' => $emailClient],
             [
@@ -64,7 +65,6 @@ class InterventionController extends Controller
             ]
         );
 
-        // 4️⃣ Créer ou mettre à jour le client lié à cet utilisateur
         $client = Client::updateOrCreate(
             ['user_id' => $user->id],
             [
@@ -75,7 +75,6 @@ class InterventionController extends Controller
             ]
         );
 
-        // 5️⃣ Créer l'intervention
         $intervention = $client->interventions()->create([
             'device_type' => $validated['appareil'],
             'description' => $validated['description_probleme'],
@@ -83,7 +82,48 @@ class InterventionController extends Controller
             'priority' => PrioriteEnum::Basse,
         ]);
 
-        // 6️⃣ Message flash selon si client créé ou existant
+        /* -----------------------------------------------------
+         *  GESTION DES IMAGES — COMPATIBLE INTERVENTION V3
+         * ----------------------------------------------------- */
+        if ($request->hasFile('images')) {
+
+            // ⚠ CORRECTION V3 : instancier le driver explicitement
+            $manager = new ImageManager(new Driver());
+
+            foreach ($request->file('images') as $imageFile) {
+
+                // Sauvegarde de l'original
+                $filename = time() . '_' . $imageFile->getClientOriginalName();
+                $path = $imageFile->storeAs('interventions', $filename, 'public');
+
+                // Chemin miniature
+                $thumbnailPath = 'interventions/thumbnails/thumb_' . $filename;
+
+                // Lecture via V3
+                $img = $manager->read($imageFile->getRealPath());
+
+                // Redimensionnement
+                $img->scale(width: 100);
+
+                // Chemin complet pour la miniature
+                $fullThumbnailPath = storage_path('app/public/' . $thumbnailPath);
+
+                // Crée le dossier s'il n'existe pas
+                if (!is_dir(dirname($fullThumbnailPath))) {
+                    mkdir(dirname($fullThumbnailPath), 0777, true);
+                }
+
+                // Sauvegarde miniature
+                $img->save($fullThumbnailPath);
+
+                // Enregistrement BDD
+                $intervention->images()->create([
+                    'path' => $path,
+                    'thumbnail_path' => $thumbnailPath,
+                ]);
+            }
+        }
+
         $message = $client->wasRecentlyCreated
             ? 'Votre compte client a été créé et votre demande est enregistrée. Connectez-vous à votre espace client pour suivre le dossier.'
             : 'Nous avons bien enregistré votre nouvelle demande d\'intervention. Connectez-vous à votre espace client pour suivre le dossier.';
@@ -91,39 +131,55 @@ class InterventionController extends Controller
         return redirect()->route('homepage')->with('success', $message);
     }
 
-    /**
-     * Formulaire d'édition d'une intervention.
-     */
     public function edit(Intervention $intervention)
     {
         return view('interventions.edit', compact('intervention'));
     }
 
-    /**
-     * Met à jour une intervention.
-     */
-    public function update(StoreInterventionRequest $request, Intervention $intervention)
+    public function update(Request $request, Intervention $intervention)
     {
-        $validated = $request->validated();
+        $validated = $request->validate([
+            'appareil' => 'required|string|max:100',
+            'description_probleme' => 'required|string',
+        ]);
 
         $intervention->update([
             'device_type' => $validated['appareil'],
             'description' => $validated['description_probleme'],
-            // Autres champs si nécessaire
         ]);
 
         return redirect()->route('interventions.show', $intervention)
             ->with('success', 'Intervention mise à jour avec succès.');
     }
 
-    /**
-     * Supprime une intervention.
-     */
     public function destroy(Intervention $intervention)
     {
+        foreach ($intervention->images as $image) {
+            if (Storage::disk('public')->exists($image->path)) {
+                Storage::disk('public')->delete($image->path);
+            }
+            if ($image->thumbnail_path && Storage::disk('public')->exists($image->thumbnail_path)) {
+                Storage::disk('public')->delete($image->thumbnail_path);
+            }
+        }
+
         $intervention->delete();
 
         return redirect()->route('interventions.index')
             ->with('success', 'Intervention supprimée avec succès.');
+    }
+
+    public function destroyImage(Image $image)
+    {
+        if (Storage::disk('public')->exists($image->path)) {
+            Storage::disk('public')->delete($image->path);
+        }
+        if ($image->thumbnail_path && Storage::disk('public')->exists($image->thumbnail_path)) {
+            Storage::disk('public')->delete($image->thumbnail_path);
+        }
+
+        $image->delete();
+
+        return back()->with('success', 'Image supprimée avec succès.');
     }
 }

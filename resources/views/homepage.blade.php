@@ -52,7 +52,7 @@
             Formulaire de Contact et Demande d'Intervention
         </h2>
 
-        <form action="{{ route('interventions.store') }}" method="POST" class="space-y-6" enctype="multipart/form-data">
+        <form action="{{ route('interventions.store') }}" method="POST" class="space-y-6" enctype="multipart/form-data" id="intervention-form">
             @csrf
 
             <div class="grid sm:grid-cols-2 gap-6">
@@ -95,11 +95,16 @@
                           placeholder="Décrivez en détail la panne, le dommage ou le service souhaité..."></textarea>
             </div>
 
+            <!-- Bloc Drag & Drop Images -->
             <div>
-                <label for="images" class="block text-sm font-medium text-gray-700">
-                    Ajouter des images (max 3)
+                <label class="block text-sm font-medium text-gray-700">
+                    Ajouter des images (max 3) - Glisser / déposer ou cliquer
                 </label>
-                <input type="file" name="images[]" id="images" multiple class="mt-1 block w-full">
+                <div id="drop-zone" class="mt-1 w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-center cursor-pointer hover:border-indigo-500">
+                    Glissez vos images ici ou cliquez pour sélectionner
+                    <input type="file" id="images" accept="image/*" multiple class="hidden">
+                </div>
+                <div id="image-previews" class="flex gap-4 mt-4 flex-wrap"></div>
             </div>
 
             <div>
@@ -111,5 +116,101 @@
         </form>
     </div>
 
-</x-app-layout>
+    <!-- Script Drag & Drop Images -->
+    <script>
+        let selectedFiles = [];
 
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('images');
+        const previewsContainer = document.getElementById('image-previews');
+        const form = document.getElementById('intervention-form');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', e => {
+            e.preventDefault();
+            dropZone.classList.add('border-indigo-500', 'bg-gray-50');
+        });
+
+        dropZone.addEventListener('dragleave', e => {
+            e.preventDefault();
+            dropZone.classList.remove('border-indigo-500', 'bg-gray-50');
+        });
+
+        dropZone.addEventListener('drop', e => {
+            e.preventDefault();
+            dropZone.classList.remove('border-indigo-500', 'bg-gray-50');
+            const files = Array.from(e.dataTransfer.files);
+            handleFiles(files);
+        });
+
+        fileInput.addEventListener('change', e => {
+            const files = Array.from(e.target.files);
+            handleFiles(files);
+            fileInput.value = '';
+        });
+
+        function handleFiles(files) {
+            files.forEach(file => {
+                if (selectedFiles.length >= 3) {
+                    alert("Vous ne pouvez sélectionner que 3 images maximum.");
+                    return;
+                }
+                if (!file.type.startsWith('image/')) return;
+                selectedFiles.push(file);
+            });
+            updatePreviews();
+        }
+
+        function updatePreviews() {
+            previewsContainer.innerHTML = '';
+
+            selectedFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const wrapper = document.createElement('div');
+                    wrapper.classList.add('relative');
+
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.maxWidth = '150px';
+                    img.style.maxHeight = '150px';
+                    img.classList.add('rounded', 'shadow');
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.type = 'button';
+                    removeBtn.innerHTML = '×';
+                    removeBtn.classList.add('absolute', 'top-0', 'right-0', 'bg-red-600', 'text-white', 'rounded-full', 'w-6', 'h-6', 'flex', 'items-center', 'justify-center', 'cursor-pointer');
+                    removeBtn.onclick = () => {
+                        selectedFiles.splice(index, 1);
+                        updatePreviews();
+                    };
+
+                    wrapper.appendChild(img);
+                    wrapper.appendChild(removeBtn);
+                    previewsContainer.appendChild(wrapper);
+                }
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Soumission du formulaire avec images
+        form.addEventListener('submit', function(e) {
+            selectedFiles.forEach(file => {
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'file';
+                hiddenInput.name = 'images[]';
+                hiddenInput.files = createFileList(file);
+                hiddenInput.style.display = 'none';
+                form.appendChild(hiddenInput);
+            });
+        });
+
+        function createFileList(file) {
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            return dataTransfer.files;
+        }
+    </script>
+
+</x-app-layout>

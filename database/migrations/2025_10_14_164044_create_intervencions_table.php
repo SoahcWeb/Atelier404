@@ -10,14 +10,19 @@ return new class extends Migration
     {
         Schema::create('interventions', function (Blueprint $table) {
             $table->id();
+
+            // Référence correcte sur la table clients
             $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
+
+            // technician_id reste sur users
             $table->foreignId('technician_id')->nullable()->constrained('users')->onDelete('set null');
+
             $table->text('description');
             $table->text('notes')->nullable();
-            $table->string('device_type', 50);
-            $table->string('priority', 20);
-            $table->string('status', 50);
-            $table->dateTime('scheduled_at')->nullable();
+            $table->string('device_type');
+            $table->string('priority');
+            $table->string('status');
+            $table->datetime('scheduled_at')->nullable();
             $table->timestamps();
         });
     }

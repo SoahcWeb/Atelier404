@@ -15,10 +15,10 @@
                         ? (auth()->user()->role->name === 'client' ? route('client.dashboard')
                         : (auth()->user()->role->name === 'technician' || auth()->user()->role->name === 'admin'
                         ? route('interventions.dashboard')
-                        : route('homepage')))
+                        : route('homepage')) )
                         : route('login')"
-                    :active="request()->routeIs('dashboard')"
-                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-3xl font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        :active="request()->routeIs('dashboard')"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-3xl font-medium text-white bg-indigo-600 hover:bg-indigo-700">
                         {{ __('Espace Connexion') }}
                     </x-nav-link>
                 </div>
@@ -47,33 +47,38 @@
                 {{ session('success') }}
             </div>
         @endif
-                <h2 class="text-2xl font-semibold text-gray-800 mb-6 border-b pb-2">
+
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6 border-b pb-2">
             Formulaire de Contact et Demande d'Intervention
         </h2>
 
-        <form action="{{ route('interventions.store') }}" method="POST" class="space-y-6">
+        <form action="{{ route('interventions.store') }}" method="POST" class="space-y-6" enctype="multipart/form-data">
             @csrf
 
             <div class="grid sm:grid-cols-2 gap-6">
                 <div>
                     <label for="nom" class="block text-sm font-medium text-gray-700">Nom et Prénom</label>
-                    <input type="text" name="nom" id="nom" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500">
+                    <input type="text" name="nom" id="nom" required
+                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-700">Adresse Email</label>
-                    <input type="email" name="email" id="email" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500">
+                    <input type="email" name="email" id="email" required
+                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
             </div>
 
             <div class="grid sm:grid-cols-2 gap-6">
                 <div>
                     <label for="telephone" class="block text-sm font-medium text-gray-700">Téléphone</label>
-                    <input type="tel" name="telephone" id="telephone" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500">
+                    <input type="tel" name="telephone" id="telephone"
+                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
 
                 <div>
                     <label for="appareil" class="block text-sm font-medium text-gray-700">Type d'Appareil</label>
-                    <select id="appareil" name="appareil" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 bg-white focus:ring-indigo-500 focus:border-indigo-500">
+                    <select id="appareil" name="appareil" required
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 bg-white focus:ring-indigo-500 focus:border-indigo-500">
                         <option value="">Sélectionnez un type</option>
                         <option value="smartphone">Smartphone</option>
                         <option value="ordinateur">Ordinateur (PC/Mac)</option>
@@ -85,11 +90,21 @@
 
             <div>
                 <label for="description_probleme" class="block text-sm font-medium text-gray-700">Description Détaillée du Problème</label>
-                <textarea name="description_probleme" id="description_probleme" rows="4" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Décrivez en détail la panne, le dommage ou le service souhaité..."></textarea>
+                <textarea name="description_probleme" id="description_probleme" rows="4" required
+                          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500"
+                          placeholder="Décrivez en détail la panne, le dommage ou le service souhaité..."></textarea>
             </div>
 
             <div>
-                <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                <label for="images" class="block text-sm font-medium text-gray-700">
+                    Ajouter des images (max 3)
+                </label>
+                <input type="file" name="images[]" id="images" multiple class="mt-1 block w-full">
+            </div>
+
+            <div>
+                <button type="submit"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700">
                     Envoyer la Demande et Créer l'Intervention
                 </button>
             </div>
@@ -97,3 +112,4 @@
     </div>
 
 </x-app-layout>
+

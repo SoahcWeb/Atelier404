@@ -5,16 +5,17 @@ namespace App\Http\Controllers;
 use App\Enums\PrioriteEnum;
 use App\Enums\StatutEnum;
 use App\Models\Intervention;
+use App\Http\Requests\StoreInterventionRequest;
 use App\Models\Client;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Image;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use Illuminate\Http\Request;
 
 class InterventionController extends Controller
 {
@@ -35,27 +36,18 @@ class InterventionController extends Controller
         return view('interventions.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreInterventionRequest $request)
     {
-        $validated = $request->validate([
-            'nom' => 'required|string|max:100',
-            'email' => 'required|email',
-            'telephone' => 'nullable|string|max:20',
-            'address' => 'nullable|string|max:200',
-            'appareil' => 'required|string|max:100',
-            'description_probleme' => 'required|string',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:5120',
-        ]);
+        $validated = $request->validated();
 
-        if ($request->hasFile('images') && count($request->file('images')) > 3) {
-            return back()->withErrors(['images' => 'Maximum 3 images autorisées.'])->withInput();
-        }
-
-        // Création / récupération du user + client
+        // Vérifie ou crée le rôle "client"
         $clientRole = Role::firstOrCreate(['name' => 'client']);
+
+        // Nom et email du client avec fallback
         $nomClient = trim($validated['nom'] ?? '') ?: 'Client sans nom';
         $emailClient = $validated['email'];
 
+        // Crée ou récupère l'utilisateur Client
         $user = User::firstOrCreate(
             ['email' => $emailClient],
             [
@@ -65,6 +57,7 @@ class InterventionController extends Controller
             ]
         );
 
+        // Crée ou met à jour le client lié à cet utilisateur
         $client = Client::updateOrCreate(
             ['user_id' => $user->id],
             [
@@ -75,6 +68,7 @@ class InterventionController extends Controller
             ]
         );
 
+        // Crée l'intervention
         $intervention = $client->interventions()->create([
             'device_type' => $validated['appareil'],
             'description' => $validated['description_probleme'],
@@ -82,12 +76,15 @@ class InterventionController extends Controller
             'priority' => PrioriteEnum::Basse,
         ]);
 
-        /* -----------------------------------------------------
-         *  GESTION DES IMAGES — COMPATIBLE INTERVENTION V3
-         * ----------------------------------------------------- */
+        // ------------------------------
+        // Gestion des images (max 3)
+        // ------------------------------
         if ($request->hasFile('images')) {
 
-            // ⚠ CORRECTION V3 : instancier le driver explicitement
+            if (count($request->file('images')) > 3) {
+                return back()->withErrors(['images' => 'Maximum 3 images autorisées.'])->withInput();
+            }
+
             $manager = new ImageManager(new Driver());
 
             foreach ($request->file('images') as $imageFile) {
@@ -116,7 +113,7 @@ class InterventionController extends Controller
                 // Sauvegarde miniature
                 $img->save($fullThumbnailPath);
 
-                // Enregistrement BDD
+                // Enregistrement en BDD
                 $intervention->images()->create([
                     'path' => $path,
                     'thumbnail_path' => $thumbnailPath,
@@ -124,6 +121,7 @@ class InterventionController extends Controller
             }
         }
 
+        // Message flash selon si client créé ou existant
         $message = $client->wasRecentlyCreated
             ? 'Votre compte client a été créé et votre demande est enregistrée. Connectez-vous à votre espace client pour suivre le dossier.'
             : 'Nous avons bien enregistré votre nouvelle demande d\'intervention. Connectez-vous à votre espace client pour suivre le dossier.';
@@ -136,12 +134,9 @@ class InterventionController extends Controller
         return view('interventions.edit', compact('intervention'));
     }
 
-    public function update(Request $request, Intervention $intervention)
+    public function update(StoreInterventionRequest $request, Intervention $intervention)
     {
-        $validated = $request->validate([
-            'appareil' => 'required|string|max:100',
-            'description_probleme' => 'required|string',
-        ]);
+        $validated = $request->validated();
 
         $intervention->update([
             'device_type' => $validated['appareil'],

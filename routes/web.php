@@ -62,3 +62,4 @@ Route::get('/dashboard', function () {
 
 // 🔐 Auth routes (login, register, forgot password, etc.)
 require __DIR__.'/auth.php';
+

@@ -4,32 +4,52 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Intervention;
-use App\Models\Client;
 
 class DashboardController extends Controller
 {
     public function dashboard()
     {
-         $user = auth()->user();
+        $user = auth()->user();
+
         if ($user->role->name === 'admin') {
-            $interventions = Intervention::with(['client', 'technician'])->get();
+            // Tous les interventions pour l'admin
+            $interventions = Intervention::with(['client', 'technician', 'images'])
+                ->latest()
+                ->get();
+
             return view('interventions.index', compact('interventions', 'user'));
         }
+
         elseif ($user->role->name === 'technician') {
-            $interventions = Intervention::where('technician_id', $user->id)
-            ->with(['client','technician'])
-            ->get();
+            // Interventions assignées au technicien connecté
+            $interventions = $user->interventionsAsTechnician()
+                ->with(['client', 'technician', 'images'])
+                ->latest()
+                ->get();
+
             return view('interventions.index', compact('interventions', 'user'));
         }
+
         elseif ($user->role->name === 'client') {
+            // Interventions liées au client via la relation
             $client = $user->client;
-            $interventions = Intervention::where('client_id', $user->id)
-            ->with(['technician'])
-            ->get();
-            return view('client.index', compact('interventions', 'user', 'client'));
+
+            if (!$client) {
+                abort(404, 'Client non trouvé.');
+            }
+
+            $interventions = $client->interventions()
+                ->with(['technician', 'images'])
+                ->latest()
+                ->get();
+
+            // Utiliser la même vue que les admins/techniciens
+            return view('interventions.index', compact('interventions', 'user', 'client'));
         }
+
         else {
             abort(403, 'Accès non autorisé.');
         }
     }
 }
+

@@ -34,7 +34,7 @@
                         <tr class="border-t">
                             <td class="p-2">{{ $intervention->device_type }}</td>
                             <td class="p-2">{{ Str::limit($intervention->description, 50) }}</td>
-                            <td class="p-2 font-medium">{{ $intervention->status }}</td>
+                            <td class="p-2 font-medium">{{ $intervention->status->value ?? $intervention->status }}</td>
                             <td class="p-2">{{ $intervention->created_at->format('d/m/Y') }}</td>
                             <td class="p-2">
                                 @foreach($intervention->images as $image)

@@ -35,11 +35,12 @@ Route::delete('/interventions/images/{image}', [InterventionController::class, '
     ->middleware('auth');
 
 Route::middleware('auth')->group(function () {
+
     // Espace client
     Route::get('/espace-client', [DashboardController::class, 'dashboard'])
         ->name('client.dashboard');
 
-    // Espace technicien / admin
+    // Espace technicien
     Route::get('/espace-tech', [DashboardController::class, 'dashboard'])
         ->name('interventions.dashboard');
 
@@ -53,13 +54,17 @@ Route::middleware('auth')->group(function () {
 
     // Ressources interventions (sauf index et store déjà gérés)
     Route::resource('interventions', InterventionController::class)->except(['index', 'store']);
+
+    // 🔹 Route index des interventions (Admin uniquement)
+    Route::get('/admin/interventions', [InterventionController::class, 'index'])
+        ->name('interventions.index')
+        ->middleware('role:admin');
 });
 
-// Tableau de bord par défaut
+// Tableau de bord général (par défaut)
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // 🔐 Auth routes (login, register, forgot password, etc.)
 require __DIR__.'/auth.php';
-

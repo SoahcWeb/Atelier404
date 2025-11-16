@@ -4,42 +4,35 @@ use Illuminate\Support\Facades\Auth;
 $user = Auth::user();
 $role = optional($user?->role)?->name ?? null;
 
-// Couleur et glow selon le rôle ou valeurs par défaut si non connecté
-$roleColor = match($role) {
-    'admin' => 'text-red-500',
-    'technician' => 'text-green-500',
-    'client' => 'text-blue-500',
-    default => 'text-black',
-};
-
-$roleGlow = match($role) {
-    'admin' => 'shadow-red-300/40',
-    'technician' => 'shadow-green-300/40',
-    'client' => 'shadow-blue-300/40',
-    default => 'shadow-gray-300/40',
+// Couleur du nom de l'utilisateur selon le rôle
+$userRoleColor = match($role) {
+    'admin' => '#8B0000',       // rouge foncé
+    'technician' => '#006400',  // vert foncé
+    'client' => '#00008B',      // bleu foncé
+    default => '#442b1f',       // couleur par défaut
 };
 @endphp
 
-<header class="w-full fixed top-0 left-0 z-50 bg-gray-100 shadow-lg border-b border-gray-300"
-        style="height: 10vh;">
+<header class="w-full fixed top-0 left-0 z-50 shadow-lg border-b border-gray-300"
+        style="height: 10vh; background-color: #d0ba9b; color: #442b1f;">
     <div class="h-full flex items-center justify-between px-8">
         {{-- LOGO / TITRE --}}
-        <div class="text-3xl font-bold tracking-wide {{ $roleColor }} drop-shadow-sm">
-            <span class="px-3 py-1 rounded-lg bg-white shadow-md {{ $roleGlow }}">
+        <div class="text-3xl font-bold tracking-wide drop-shadow-sm">
+            <span class="px-3 py-1 rounded-lg bg-white shadow-md">
                 www.Atelier404.com
             </span>
         </div>
 
         {{-- BREADCRUMB --}}
-        <div class="text-gray-700 text-lg font-semibold">
+        <div class="text-lg font-semibold">
             {{ $breadcrumb ?? '' }}
         </div>
 
         {{-- MENU DROIT --}}
         <div class="flex items-center gap-4">
             @if($user)
-                {{-- Utilisateur connecté --}}
-                <span class="font-semibold text-xl {{ $roleColor }} drop-shadow-sm">
+                {{-- Nom utilisateur avec couleur selon le rôle --}}
+                <span class="font-semibold text-xl" style="color: {{ $userRoleColor }} !important;">
                     {{ $user->name }}
                 </span>
 
@@ -72,9 +65,9 @@ $roleGlow = match($role) {
                     </div>
                 </div>
             @else
-                {{-- Utilisateur non connecté → Boutons Se connecter / S'inscrire --}}
-                <a href="{{ route('login') }}" class="px-4 py-2 bg-yellow-400 text-gray-900 font-semibold rounded hover:bg-yellow-500">Se connecter</a>
-                <a href="{{ route('register') }}" class="px-4 py-2 border border-yellow-400 text-yellow-400 font-semibold rounded hover:bg-yellow-400 hover:text-gray-900">S'inscrire</a>
+                {{-- Boutons Se connecter / S'inscrire --}}
+                <a href="{{ route('login') }}" class="px-4 py-2 bg-[#442b1f] text-[#d0ba9b] font-semibold rounded hover:opacity-90">Se connecter</a>
+                <a href="{{ route('register') }}" class="px-4 py-2 border border-[#442b1f] text-[#442b1f] font-semibold rounded hover:bg-[#442b1f] hover:text-[#d0ba9b]">S'inscrire</a>
             @endif
         </div>
     </div>

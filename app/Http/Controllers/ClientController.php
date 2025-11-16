@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use Illuminate\Http\Request;
+use App\Models\Intervention;
 
 class ClientController extends Controller
 {
@@ -12,9 +13,19 @@ class ClientController extends Controller
      */
     public function index()
     {
-        $clients = Client::all();
+        $user = auth()->user();
 
-       return view('client.index', compact('clients'));
+        if ($user->role->name !== 'client') {
+            abort(403, 'Accès non autorisé.');
+        }
+
+        $client = $user->client;
+
+        $interventions = Intervention::where('client_id', $user->id)
+            ->with('technician')
+            ->get();
+
+        return view('client.index', compact('user', 'client', 'interventions'));
     }
 
     /**
@@ -46,7 +57,8 @@ class ClientController extends Controller
      */
     public function edit(Client $client)
     {
-        //
+        $this->authorize('update', $client);
+        return view('clients.edit', compact('client'));
     }
 
     /**
@@ -54,7 +66,7 @@ class ClientController extends Controller
      */
     public function update(Request $request, Client $client)
     {
-        //
+        $this->authorize('update', $client);
     }
 
     /**
@@ -62,7 +74,9 @@ class ClientController extends Controller
      */
     public function destroy(Client $client)
     {
-        //
+        $this->authorize('delete', $client);
+        $client->delete();
+        return redirect()->route('clients.index')->with('success', 'Client supprimé');
     }
 
 

@@ -12,9 +12,9 @@
                 </p>
                 <div class="mt-20">
                     <x-nav-link :href="auth()->check()
-                        ? (auth()->user()->role->name === 'client' ? route('client.dashboard')
+                        ? (auth()->user()->role->name === 'client' ? route('client.index')
                         : (auth()->user()->role->name === 'technician' || auth()->user()->role->name === 'admin'
-                        ? route('interventions.dashboard')
+                        ? route('interventions.index')
                         : route('homepage')))
                         : route('login')"
                     :active="request()->routeIs('dashboard')"

@@ -23,27 +23,25 @@ Route::get('/', function () {
 
 Route::post('/interventions/store', [InterventionController::class, 'store'])->name('interventions.store');
 
-Route::middleware('auth')->group(function () {
-    // Espace client
-    Route::get('/espace-client', [DashboardController::class, 'dashboard'])->name('client.dashboard');
+Route::get('/dashboard', function () { return view('dashboard'); })->middleware(['auth', 'verified'])->name('dashboard');
 
-    // Espace technicien / admin
-    Route::get('/espace-tech', [DashboardController::class, 'dashboard'])->name('interventions.dashboard');
-});
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
-// 👤 Gestion du profil utilisateur
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // Espace client
+    Route::get('/espace-client', [ClientController::class, 'index'])->name('client.index');
+
+    // Espace technicien / admin
+    Route::get('/espace-tech', [InterventionController::class, 'index'])->name('interventions.index');
+
     Route::resource('clients', ClientController::class);
 
-    Route::resource('interventions', InterventionController::class)->except(['index', 'store']);
+    Route::resource('interventions', InterventionController::class)->except(['store']);
+
+    Route::post('/interventions/{intervention}/reassign', [InterventionController::class, 'reassign'])->name('interventions.reassign');
 });
 
-// 🔐 Auth routes (login, register, forgot password, etc.)
 require __DIR__.'/auth.php';

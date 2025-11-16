@@ -18,24 +18,24 @@ class UserSeeder extends Seeder
 
         User::create([
             'name' => 'Admin',
-            'email' => 'admin@atelier404.local',
-            'password' => Hash::make('admin123'),
+            'email' => 'admin@test.com',
+            'password' => Hash::make('password'),
             'role_id' => 1,
         ]);
 
         User::create([
-            'name' => 'Jesus',
-            'email' => 'jesus@atelier404.local',
-            'password' => Hash::make('jesus123'),
+            'name' => 'TecTest',
+            'email' => 'tech@test.com',
+            'password' => Hash::make('password'),
             'role_id' => 2,
         ]);
 
         $clientRoleId = Role::where('name', 'Client')->first()->id;
 
         $testClient = User::create([
-            'name' => 'ClienteTest',
+            'name' => 'ClientTest',
             'email' => 'client@test.com',
-            'password' => Hash::make('client123'),
+            'password' => Hash::make('password'),
             'role_id' => $clientRoleId,
         ]);
 

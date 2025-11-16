@@ -29,9 +29,13 @@
                     @if ($user->role->name === 'admin')
                     <td class="p-2">{{ $intervention->technician->name ?? 'Non assigné' }}</td>
                     @endif
+
                     <td class="p-2">
+                       @can('view', $intervention)
                         <a href="{{ route('interventions.show', $intervention) }}"
-                           class="text-indigo-600 hover:underline">Voir</a>
+                           class="text-indigo-600 hover:underline">Voir
+                        </a>
+                       @endcan
                     </td>
                 </tr>
             @endforeach

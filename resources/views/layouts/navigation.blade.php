@@ -5,7 +5,7 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
+                    <a href="{{ route('homepage') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
                 </div>
@@ -13,9 +13,9 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="auth()->check()
-                        ? (auth()->user()->role->name === 'client' ? route('client.dashboard')
+                        ? (auth()->user()->role->name === 'client' ? route('client.index')
                         : (auth()->user()->role->name === 'technician' || auth()->user()->role->name === 'admin'
-                        ? route('interventions.dashboard')
+                        ? route('interventions.index')
                         : route('homepage')))
                         : route('login')"
                     :active="request()->routeIs('dashboard')">

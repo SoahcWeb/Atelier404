@@ -11,6 +11,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Models\Role;
+use App\Http\Requests\UpdateInterventionRequest;
+use Illuminate\Http\Request;
 
 class InterventionController extends Controller
 {
@@ -19,16 +21,31 @@ class InterventionController extends Controller
      */
     public function index()
     {
-        // On récupère toutes les interventions avec le client et le technicien
-        $interventions = Intervention::with(['client', 'technicien'])->get();
 
-        // On envoie la variable à la vue
-        return view('interventions.index', compact('interventions'));
+         $user = auth()->user();
+
+        if ($user->role->name === 'admin') {
+            $interventions = Intervention::with(['client', 'technician'])->get();
+        }
+        elseif ($user->role->name === 'technician') {
+            $interventions = Intervention::where('technician_id', $user->id)
+                ->with(['client', 'technician'])
+                ->get();
+
+        }
+        else {
+            abort(403, 'Accès non autorisé.');
+        }
+
+
+        return view('interventions.index', compact('interventions', 'user'));
     }
 
     public function show(Intervention $intervention)
     {
-        return view('interventions.show', compact('intervention'));
+        $this->authorize('view', $intervention);
+
+    return view('interventions.show', compact('intervention'));
     }
 
     public function create()
@@ -47,7 +64,7 @@ class InterventionController extends Controller
             [
                 'name' => $validated['nom'],
                 'password' => Hash::make(Str::random(12)),
-                'role_id' => Role::where('name', 'Client')->first()->id,
+                'role_id' => Role::where('name', 'client')->first()->id,
             ]
         );
 
@@ -55,16 +72,16 @@ class InterventionController extends Controller
             ['user_id' => $user->id],
             [
                 'phone' => $validated['telephone'],
-                'address' => $validated['address'] ?? null,// Valeur par défaut
+                'address' => $validated['address'] ?? null,
             ]
         );
 
-        $intervention = $client->interventions()->create([
+        $intervention = Intervention::create([
+            'client_id' => $user->id,
             'device_type' => $validated['appareil'],
             'description' => $validated['description_probleme'],
             'status' => StatutEnum::Nouvelle,
             'priority' => PrioriteEnum::Basse,
-            // ... autres champs
         ]);
 
         // 5. Redirection et Instructions
@@ -82,27 +99,46 @@ class InterventionController extends Controller
 
     public function edit(Intervention $intervention)
     {
+         $this->authorize('update', $intervention);
+
         return view('interventions.edit', compact('intervention'));
     }
 
-    public function update(StoreInterventionRequest $request, Intervention $intervention)
+    public function update(UpdateInterventionRequest $request, Intervention $intervention)
     {
+        $this->authorize('update', $intervention);
+
         $validated = $request->validated();
 
-        $intervention->update([
-            'type_appareil' => $validated['appareil'],
-            'description' => $validated['description_probleme'],
-            // ... autres champs
-        ]);
+        $intervention->update($validated);
 
-        return redirect()->route('interventions.show', $intervention)->with('success', 'Intervention mise à jour avec succès.');
+        return redirect()->route('interventions.show', $intervention)
+                        ->with('success', 'Intervention mise à jour avec succès.');
     }
 
     public function destroy(Intervention $intervention)
     {
+        $this->authorize('delete', $intervention);
+
         $intervention->delete();
 
         return redirect()->route('interventions.index')->with('success', 'Intervention supprimée avec succès.');
+    }
+
+    public function reassign(Request $request, Intervention $intervention)
+    {
+        $this->authorize('reassign', $intervention);
+
+        $validated = $request->validate([
+            'technician_id' => 'required|exists:users,id',
+        ]);
+
+        $intervention->update([
+            'technician_id' => $validated['technician_id'],
+        ]);
+
+        return redirect()->route('interventions.show', $intervention)
+                        ->with('success', 'Technicien réassigné avec succès.');
     }
 
 

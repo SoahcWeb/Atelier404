@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\InterventionController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FaqController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +21,9 @@ use App\Http\Controllers\DashboardController;
 Route::get('/', function () {
     return view('homepage');
 })->name('homepage');
+
+// Page FAQ
+Route::get('/faq', [FaqController::class, 'index'])->name('faq');
 
 // Formulaire de création d'une intervention (GET)
 Route::get('/interventions/create', [InterventionController::class, 'create'])
@@ -68,3 +72,4 @@ Route::get('/dashboard', function () {
 
 // 🔐 Auth routes (login, register, forgot password, etc.)
 require __DIR__.'/auth.php';
+

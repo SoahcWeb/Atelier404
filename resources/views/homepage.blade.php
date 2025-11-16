@@ -10,18 +10,6 @@
                 <p class="text-gray-600 mb-4">
                     Bienvenue à l'Atelier 404. Nous sommes spécialisés dans le diagnostic et la réparation de tous types d'appareils électroniques.
                 </p>
-                <div class="mt-20">
-                    <x-nav-link :href="auth()->check()
-                        ? (auth()->user()->role->name === 'client' ? route('client.dashboard')
-                        : (auth()->user()->role->name === 'technician' || auth()->user()->role->name === 'admin'
-                        ? route('interventions.dashboard')
-                        : route('homepage')) )
-                        : route('login')"
-                        :active="request()->routeIs('dashboard')"
-                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-3xl font-medium text-white bg-indigo-600 hover:bg-indigo-700">
-                        {{ __('Espace Connexion') }}
-                    </x-nav-link>
-                </div>
             </div>
 
             <div>
@@ -194,7 +182,6 @@
             });
         }
 
-        // Soumission du formulaire avec images
         form.addEventListener('submit', function(e) {
             selectedFiles.forEach(file => {
                 const hiddenInput = document.createElement('input');

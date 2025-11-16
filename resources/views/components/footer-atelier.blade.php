@@ -21,10 +21,10 @@
 
             <!-- Réseaux sociaux sous la FAQ -->
             <div class="flex justify-center gap-2 mt-2">
-                <a href="#"><img src="{{ asset('images/facebook-icon.svg') }}" alt="Facebook" class="w-6 h-6"></a>
-                <a href="#"><img src="{{ asset('images/instagram-icon.svg') }}" alt="Instagram" class="w-6 h-6"></a>
-                <a href="#"><img src="{{ asset('images/linkedin-icon.svg') }}" alt="LinkedIn" class="w-6 h-6"></a>
-                <a href="#"><img src="{{ asset('images/discord-icon.svg') }}" alt="Discord" class="w-6 h-6"></a>
+                <a href="#"><img src="{{ asset('images/facebook.png') }}" alt="Facebook" class="w-6 h-6"></a>
+                <a href="#"><img src="{{ asset('images/instagram.png') }}" alt="Instagram" class="w-6 h-6"></a>
+                <a href="#"><img src="{{ asset('images/linkedin.png') }}" alt="LinkedIn" class="w-6 h-6"></a>
+                <a href="#"><img src="{{ asset('images/discord.png') }}" alt="Discord" class="w-6 h-6"></a>
             </div>
         </div>
 

@@ -57,4 +57,11 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    public function show()
+{
+    $user = auth()->user(); // récupère l'utilisateur connecté
+    return view('profile.show', compact('user'));
+}
+
 }

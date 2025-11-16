@@ -4,66 +4,76 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ClientController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Afficher l'espace client pour l'utilisateur connecté.
+     */
+    public function espaceClient()
+    {
+        $user = Auth::user(); // Récupère l'utilisateur connecté
+        $client = Client::where('user_id', $user->id)->first(); // Récupère le client associé
+        $interventions = $client ? $client->interventions : collect(); // Ses interventions ou collection vide
+
+        return view('client.index', compact('user', 'client', 'interventions'));
+    }
+
+    /**
+     * Afficher la liste de tous les clients (admin uniquement si besoin).
      */
     public function index()
     {
         $clients = Client::all();
-
-       return view('client.index', compact('clients'));
+        return view('client.index', compact('clients'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Formulaire de création d'un nouveau client.
      */
     public function create()
     {
-        //
+        // Si nécessaire
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Stocker un nouveau client.
      */
     public function store(Request $request)
     {
-        //
+        // Si nécessaire
     }
 
     /**
-     * Display the specified resource.
+     * Afficher un client spécifique.
      */
     public function show(Client $client)
     {
-
+        // Si nécessaire
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Formulaire d'édition d'un client.
      */
     public function edit(Client $client)
     {
-        //
+        // Si nécessaire
     }
 
     /**
-     * Update the specified resource in storage.
+     * Mettre à jour un client.
      */
     public function update(Request $request, Client $client)
     {
-        //
+        // Si nécessaire
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Supprimer un client.
      */
     public function destroy(Client $client)
     {
-        //
+        // Si nécessaire
     }
-
-
 }

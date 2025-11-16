@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Atelier404') }}</title>
+    <title>{{ $title ?? config('app.name', 'Atelier404') }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -15,12 +15,12 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased">
-    <div class="min-h-screen bg-gray-100">
+    <div class="min-h-screen flex flex-col bg-gray-100">
 
-        {{-- Nouveau header Atelier 404 --}}
+        {{-- Header --}}
         <x-header-atelier />
 
-        {{-- En-tête optionnel des pages (Jetstream) --}}
+        {{-- En-tête optionnel des pages --}}
         @if (isset($header))
             <header class="bg-white shadow">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -30,10 +30,14 @@
         @endif
 
         {{-- Contenu principal --}}
-        <main>
+        <main class="flex-grow">
             {{ $slot }}
         </main>
+
+        {{-- Footer --}}
+        <x-footer-atelier />
 
     </div>
 </body>
 </html>
+

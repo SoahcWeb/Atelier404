@@ -1,110 +1,150 @@
 <x-app-layout title="Accueil | Demande d'Intervention">
 
-    <div id="presentation" class="bg-white p-8 rounded-lg shadow-xl mb-12">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-6 border-b pb-2">
-            Présentation de l'Atelier 404
-        </h2>
-        <div class="grid md:grid-cols-2 gap-8">
-            <div>
-                <h3 class="text-xl font-medium text-indigo-600 mb-3">Votre expert en réparation d'appareils électroniques</h3>
-                <p class="text-gray-600 mb-4">
-                    Bienvenue à l'Atelier 404. Nous sommes spécialisés dans le diagnostic et la réparation de tous types d'appareils électroniques.
-                </p>
-            </div>
+    <div class="min-h-screen" style="background-color:#f9eddd; color:#442b1f; padding-top:5%;">
 
-            <div>
-                <h3 class="text-xl font-medium text-indigo-600 mb-3">Horaires & Services Proposés</h3>
-                <h4 class="font-semibold text-gray-700">🕰️ Horaires d'ouverture :</h4>
-                <ul class="text-gray-600 list-disc list-inside ml-4">
-                    <li>Lundi - Vendredi: 9h00 - 18h00</li>
-                    <li>Samedi: 10h00 - 16h00</li>
-                </ul>
-                <h4 class="font-semibold text-gray-700 mt-4">🔧 Services Principaux :</h4>
-                <ul class="text-gray-600 list-disc list-inside ml-4">
-                    <li>Réparation d'écrans</li>
-                    <li>Diagnostic de pannes</li>
-                    <li>Récupération de données</li>
-                </ul>
-            </div>
+        <!-- CONTENEUR GLOBAL AVEC 5% DE CHAQUE CÔTÉ -->
+        <div class="mx-[5%]">
+
+            <!-- SECTION : QUI SOMMES-NOUS ? -->
+<div id="presentation" class="p-10 rounded-xl shadow-xl mb-16" style="background:white;">
+
+    <h2 class="text-3xl font-bold mb-8 border-b pb-3" style="border-color:#442b1f;">
+        Qui sommes-nous ?
+    </h2>
+
+    <div class="flex flex-col md:flex-row items-center md:items-start gap-12">
+
+        <!-- IMAGE À GAUCHE -->
+        <div class="flex-shrink-0">
+            <img src="{{ asset('images/Atelier404.png') }}"
+                 alt="Atelier 404"
+                 class="rounded-lg shadow-md max-w-[420px] ml-8">
         </div>
+
+        <!-- TEXTE À DROITE -->
+        <div class="flex-1">
+            <h3 class="text-2xl font-semibold mb-4">
+                Votre expert en réparation d'appareils électroniques
+            </h3>
+
+            <p class="text-lg leading-relaxed mb-6">
+                Bienvenue à l'Atelier 404. Nous sommes spécialisés dans
+                le diagnostic et la réparation de tous types d'appareils
+                électroniques. Nous mettons notre expertise et notre passion
+                au service de vos appareils pour leur donner une seconde vie.
+            </p>
+
+            <h4 class="text-xl font-semibold mt-6 mb-2">🕰️ Horaires d'ouverture :</h4>
+            <ul class="list-disc list-inside ml-4 text-lg">
+                <li>Lundi - Vendredi : 9h00 - 18h00</li>
+                <li>Samedi : 10h00 - 16h00</li>
+            </ul>
+
+            <h4 class="text-xl font-semibold mt-6 mb-2">🔧 Services Principaux :</h4>
+            <ul class="list-disc list-inside ml-4 text-lg">
+                <li>Réparation d'écrans</li>
+                <li>Diagnostic de pannes</li>
+                <li>Récupération de données</li>
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+
+            <!-- SECTION : FORMULAIRE -->
+            <div id="contact" class="p-10 rounded-xl shadow-xl mb-16" style="background:white;">
+
+                @if (session('success'))
+                    <div class="mb-6 p-4 rounded-lg" style="background:#d1f5d3; color:#155724;">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                <h2 class="text-3xl font-bold mb-8 border-b pb-3" style="border-color:#442b1f;">
+                    Formulaire de Contact et Demande d'Intervention
+                </h2>
+
+                <form action="{{ route('interventions.store') }}"
+                      method="POST"
+                      class="space-y-6"
+                      enctype="multipart/form-data"
+                      id="intervention-form">
+
+                    @csrf
+
+                    <div class="grid sm:grid-cols-2 gap-6">
+                        <div>
+                            <label for="nom" class="block text-sm font-medium">Nom et Prénom</label>
+                            <input type="text" name="nom" id="nom" required
+                                   class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+
+                        <div>
+                            <label for="email" class="block text-sm font-medium">Adresse Email</label>
+                            <input type="email" name="email" id="email" required
+                                   class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                    </div>
+
+                    <div class="grid sm:grid-cols-2 gap-6">
+                        <div>
+                            <label for="telephone" class="block text-sm font-medium">Téléphone</label>
+                            <input type="tel" name="telephone" id="telephone"
+                                   class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+
+                        <div>
+                            <label for="appareil" class="block text-sm font-medium">Type d'Appareil</label>
+                            <select id="appareil" name="appareil" required
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 bg-white focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="">Sélectionnez un type</option>
+                                <option value="smartphone">Smartphone</option>
+                                <option value="ordinateur">Ordinateur (PC/Mac)</option>
+                                <option value="tablette">Tablette</option>
+                                <option value="autre">Autre</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="description_probleme" class="block text-sm font-medium">Description Détaillée du Problème</label>
+                        <textarea name="description_probleme" id="description_probleme" rows="4" required
+                                  class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500"
+                                  placeholder="Décrivez en détail la panne, le dommage ou le service souhaité..."></textarea>
+                    </div>
+
+                    <!-- DRAG & DROP IMAGES -->
+                    <div>
+                        <label class="block text-sm font-medium">
+                            Ajouter des images (max 3) - Glisser / déposer ou cliquer
+                        </label>
+
+                        <div id="drop-zone"
+                             class="mt-1 w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-center cursor-pointer hover:border-indigo-500">
+                            Glissez vos images ici ou cliquez pour sélectionner
+                            <input type="file" id="images" accept="image/*" multiple class="hidden">
+                        </div>
+
+                        <div id="image-previews" class="flex gap-4 mt-4 flex-wrap"></div>
+                    </div>
+
+                    <!-- BOUTON IDENTIQUE À “SE CONNECTER” -->
+                    <div>
+                        <button type="submit"
+                                class="px-4 py-2 bg-[#442b1f] text-[#d0ba9b] font-semibold rounded hover:opacity-90 w-full text-center">
+                            Envoyer la Demande et Créer l'Intervention
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div> <!-- FIN MARGE 5% -->
+
     </div>
 
-    <div id="contact" class="bg-white p-8 rounded-lg shadow-xl">
-        @if (session('success'))
-            <div class="mb-6 p-4 rounded-lg bg-green-100 border border-green-400 text-green-800">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        <h2 class="text-2xl font-semibold text-gray-800 mb-6 border-b pb-2">
-            Formulaire de Contact et Demande d'Intervention
-        </h2>
-
-        <form action="{{ route('interventions.store') }}" method="POST" class="space-y-6" enctype="multipart/form-data" id="intervention-form">
-            @csrf
-
-            <div class="grid sm:grid-cols-2 gap-6">
-                <div>
-                    <label for="nom" class="block text-sm font-medium text-gray-700">Nom et Prénom</label>
-                    <input type="text" name="nom" id="nom" required
-                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700">Adresse Email</label>
-                    <input type="email" name="email" id="email" required
-                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-            </div>
-
-            <div class="grid sm:grid-cols-2 gap-6">
-                <div>
-                    <label for="telephone" class="block text-sm font-medium text-gray-700">Téléphone</label>
-                    <input type="tel" name="telephone" id="telephone"
-                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-
-                <div>
-                    <label for="appareil" class="block text-sm font-medium text-gray-700">Type d'Appareil</label>
-                    <select id="appareil" name="appareil" required
-                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 bg-white focus:ring-indigo-500 focus:border-indigo-500">
-                        <option value="">Sélectionnez un type</option>
-                        <option value="smartphone">Smartphone</option>
-                        <option value="ordinateur">Ordinateur (PC/Mac)</option>
-                        <option value="tablette">Tablette</option>
-                        <option value="autre">Autre</option>
-                    </select>
-                </div>
-            </div>
-
-            <div>
-                <label for="description_probleme" class="block text-sm font-medium text-gray-700">Description Détaillée du Problème</label>
-                <textarea name="description_probleme" id="description_probleme" rows="4" required
-                          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500"
-                          placeholder="Décrivez en détail la panne, le dommage ou le service souhaité..."></textarea>
-            </div>
-
-            <!-- Bloc Drag & Drop Images -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700">
-                    Ajouter des images (max 3) - Glisser / déposer ou cliquer
-                </label>
-                <div id="drop-zone" class="mt-1 w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-center cursor-pointer hover:border-indigo-500">
-                    Glissez vos images ici ou cliquez pour sélectionner
-                    <input type="file" id="images" accept="image/*" multiple class="hidden">
-                </div>
-                <div id="image-previews" class="flex gap-4 mt-4 flex-wrap"></div>
-            </div>
-
-            <div>
-                <button type="submit"
-                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700">
-                    Envoyer la Demande et Créer l'Intervention
-                </button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Script Drag & Drop Images -->
+    <!-- SCRIPT DRAG & DROP -->
     <script>
         let selectedFiles = [];
 
@@ -168,7 +208,11 @@
                     const removeBtn = document.createElement('button');
                     removeBtn.type = 'button';
                     removeBtn.innerHTML = '×';
-                    removeBtn.classList.add('absolute', 'top-0', 'right-0', 'bg-red-600', 'text-white', 'rounded-full', 'w-6', 'h-6', 'flex', 'items-center', 'justify-center', 'cursor-pointer');
+                    removeBtn.classList.add(
+                        'absolute', 'top-0', 'right-0',
+                        'bg-red-600', 'text-white', 'rounded-full',
+                        'w-6', 'h-6', 'flex', 'items-center', 'justify-center'
+                    );
                     removeBtn.onclick = () => {
                         selectedFiles.splice(index, 1);
                         updatePreviews();

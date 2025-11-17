@@ -5,22 +5,32 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Role;
 
 class UserController extends Controller
 {
     /**
-     * Afficher la liste des utilisateurs.
-     * Si un rôle est fourni, filtrer par rôle (client ou technician).
+     * Afficher tous les utilisateurs ou filtrer par rôle.
      */
-    public function indexByRole($role = null)
+    public function index(Request $request)
     {
-        if ($role) {
-            $users = User::where('role', $role)->get();
+        $selectedRole = $request->query('role'); // récupère le rôle choisi depuis le filtre
+
+        if ($selectedRole) {
+            // Filtrer par rôle si sélectionné
+            $roleRecord = Role::where('name', $selectedRole)->first();
+
+            if (!$roleRecord) {
+                abort(404, "Rôle introuvable : $selectedRole");
+            }
+
+            $users = User::where('role_id', $roleRecord->id)->get();
         } else {
-            $users = User::all();
+            // Sinon, tous les utilisateurs
+            $users = User::with('role')->get();
         }
 
-        return view('admin.users.index', compact('users', 'role'));
+        return view('admin.users.index', compact('users', 'selectedRole'));
     }
 
     /**
@@ -29,10 +39,16 @@ class UserController extends Controller
     public function updateRole(Request $request, User $user)
     {
         $request->validate([
-            'role' => 'required|in:client,technician',
+            'role' => 'required|in:admin,technician,client',
         ]);
 
-        $user->role = $request->role;
+        $newRole = Role::where('name', $request->role)->first();
+
+        if (!$newRole) {
+            return redirect()->back()->with('error', 'Rôle invalide.');
+        }
+
+        $user->role_id = $newRole->id;
         $user->save();
 
         return redirect()->back()->with('success', 'Rôle mis à jour avec succès.');

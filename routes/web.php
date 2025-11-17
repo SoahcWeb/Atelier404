@@ -51,16 +51,15 @@ Route::middleware('auth')->group(function () {
         // Dashboard admin
         Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
 
-        // Toutes les interventions admin
-        Route::get('/interventions', [InterventionController::class, 'index'])->name('admin.interventions.index');
+        // Toutes les interventions (admin)
+        Route::get('/interventions', [InterventionController::class, 'index'])
+            ->name('admin.interventions.index');
 
-        // Gestion des utilisateurs par rôle
-        Route::get('/users/{role?}', [UserController::class, 'indexByRole'])
-            ->where('role', 'client|technician')
-            ->name('admin.users.role');
+        // Liste complète des utilisateurs avec filtre
+        Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
 
         // Mise à jour du rôle d’un utilisateur
-        Route::post('/users/{user}/role', [UserController::class, 'updateRole'])->name('admin.users.updateRole');
+        Route::put('/users/{user}/role', [UserController::class, 'updateRole'])->name('admin.users.updateRole');
 
         // Export CSV
         Route::get('/export/csv', [ExportController::class, 'exportCsv'])->name('export.csv');

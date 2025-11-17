@@ -17,7 +17,7 @@ $userRoleColor = match($role) {
         style="height: 10vh; background-color: #d0ba9b; color: #442b1f;">
     <div class="h-full flex items-center justify-between px-8">
 
-        {{-- LOGO / TITRE --}}
+        {{-- LOGO --}}
         <div class="text-3xl font-bold tracking-wide drop-shadow-sm">
             <span class="px-3 py-1 rounded-lg bg-white shadow-md">
                 www.Atelier404.com
@@ -37,28 +37,39 @@ $userRoleColor = match($role) {
                 </span>
 
                 <div class="relative" id="dropdown-container">
-                    <button id="dropdown-button" class="px-4 py-2 rounded-md bg-white border shadow-sm hover:shadow-md transition">
+
+                    <button id="dropdown-button"
+                        class="px-4 py-2 rounded-md bg-white border shadow-sm hover:shadow-md transition">
                         ☰
                     </button>
 
-                    <div id="dropdown-menu" class="absolute right-0 mt-2 bg-white shadow-xl rounded-lg w-56 overflow-hidden border hidden">
+                    <div id="dropdown-menu"
+                        class="absolute right-0 mt-2 bg-white shadow-xl rounded-lg w-56 overflow-hidden border hidden">
 
-                        {{-- Tous les utilisateurs --}}
-                        <a href="{{ route('profile.edit') }}" class="block px-4 py-3 hover:bg-gray-100 font-medium">Mon Profil</a>
+                        {{-- Profil --}}
+                        <a href="{{ route('profile.edit') }}"
+                           class="block px-4 py-3 hover:bg-gray-100 font-medium">Mon Profil</a>
 
+                        {{-- ADMIN --}}
                         @if($role === 'admin')
-    <a href="{{ route('admin.interventions.index') }}" class="block px-4 py-3 hover:bg-gray-100">Toutes les interventions</a>
-    <a href="{{ route('interventions.create') }}" class="block px-4 py-3 hover:bg-gray-100">Créer une intervention</a>
-    <a href="{{ route('admin.users.role', 'client') }}" class="block px-4 py-3 hover:bg-gray-100">Clients</a>
-    <a href="{{ route('admin.users.role', 'technician') }}" class="block px-4 py-3 hover:bg-gray-100">Techniciens</a>
-    <a href="{{ route('admin.dashboard') }}" class="block px-4 py-3 hover:bg-gray-100">Statistiques</a>
-    <a href="{{ route('export.csv') }}" class="block px-4 py-3 hover:bg-gray-100">Export CSV</a>
-@endif
+                            <a href="{{ route('admin.interventions.index') }}" class="block px-4 py-3 hover:bg-gray-100">Toutes les interventions</a>
+                            <a href="{{ route('interventions.create') }}" class="block px-4 py-3 hover:bg-gray-100">Créer une intervention</a>
 
+                            {{-- Liens utilisateurs filtrés --}}
+                            <a href="{{ route('admin.users.index', ['role' => 'client']) }}" class="block px-4 py-3 hover:bg-gray-100">Clients</a>
+<a href="{{ route('admin.users.index', ['role' => 'technician']) }}" class="block px-4 py-3 hover:bg-gray-100">Techniciens</a>
+<a href="{{ route('admin.users.index', ['role' => 'admin']) }}" class="block px-4 py-3 hover:bg-gray-100">Admins</a>
+
+                            <a href="{{ route('admin.dashboard') }}" class="block px-4 py-3 hover:bg-gray-100">Statistiques</a>
+                            <a href="{{ route('export.csv') }}" class="block px-4 py-3 hover:bg-gray-100">Export CSV</a>
+                        @endif
+
+                        {{-- TECHNICIEN --}}
                         @if($role === 'technician')
                             <a href="{{ route('interventions.dashboard') }}" class="block px-4 py-3 hover:bg-gray-100">Mes interventions</a>
                         @endif
 
+                        {{-- CLIENT --}}
                         @if($role === 'client')
                             <a href="{{ route('client.dashboard') }}" class="block px-4 py-3 hover:bg-gray-100">Mes réparations</a>
                         @endif
@@ -66,13 +77,13 @@ $userRoleColor = match($role) {
                         {{-- Déconnexion --}}
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button class="w-full text-left px-4 py-3 hover:bg-gray-100 font-medium">Déconnexion</button>
+                            <button class="w-full text-left px-4 py-3 hover:bg-gray-100 font-medium">
+                                Déconnexion
+                            </button>
                         </form>
-
                     </div>
                 </div>
             @else
-                {{-- Se connecter / S'inscrire --}}
                 <a href="{{ route('login') }}" class="px-4 py-2 bg-[#442b1f] text-[#d0ba9b] font-semibold rounded hover:opacity-90">Se connecter</a>
                 <a href="{{ route('register') }}" class="px-4 py-2 border border-[#442b1f] text-[#442b1f] font-semibold rounded hover:bg-[#442b1f] hover:text-[#d0ba9b]">S'inscrire</a>
             @endif
@@ -80,7 +91,6 @@ $userRoleColor = match($role) {
     </div>
 </header>
 
-{{-- SPACER --}}
 <div style="height: 10vh;"></div>
 
 <script>

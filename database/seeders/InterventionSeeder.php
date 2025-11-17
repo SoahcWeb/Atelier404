@@ -33,7 +33,7 @@ if ($clients->isEmpty()) {
 
         foreach ($clients as $client) {
             Intervention::factory(rand(1, 3))->create([
-                'client_id' => $client->id,
+                'client_id' => $client->client->id,
                 'technician_id' => User::where('role_id', $technicianRoleId)->inRandomOrder()->first()->id,
             ]);
         }

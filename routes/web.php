@@ -45,6 +45,8 @@ Route::middleware('auth')->group(function () {
     // Ressources interventions (sauf index et store déjà gérés)
     Route::resource('interventions', InterventionController::class)->except(['index', 'store']);
 
+    Route::post('/interventions/{intervention}/reassign', [InterventionController::class, 'reassign'])->name('interventions.reassign');
+
     // 🔹 Routes admin
     Route::prefix('admin')->middleware('role:admin')->group(function () {
 

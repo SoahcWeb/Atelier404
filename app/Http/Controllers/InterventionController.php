@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use Illuminate\Http\Request;
+use App\Http\Requests\UpdateInterventionRequest;
 
 class InterventionController extends Controller
 {
@@ -134,14 +135,12 @@ class InterventionController extends Controller
         return view('interventions.edit', compact('intervention'));
     }
 
-    public function update(StoreInterventionRequest $request, Intervention $intervention)
+    public function update(UpdateInterventionRequest $request, Intervention $intervention)
     {
+        $this->authorize('update', $intervention);
         $validated = $request->validated();
 
-        $intervention->update([
-            'device_type' => $validated['appareil'],
-            'description' => $validated['description_probleme'],
-        ]);
+        $intervention->update($validated);
 
         return redirect()->route('interventions.show', $intervention)
             ->with('success', 'Intervention mise à jour avec succès.');
@@ -157,10 +156,11 @@ class InterventionController extends Controller
                 Storage::disk('public')->delete($image->thumbnail_path);
             }
         }
+        $this->authorize('delete', $intervention);
 
         $intervention->delete();
 
-        return redirect()->route('interventions.index')
+        return redirect()->route('admin.dashboard')
             ->with('success', 'Intervention supprimée avec succès.');
     }
 
@@ -176,5 +176,21 @@ class InterventionController extends Controller
         $image->delete();
 
         return back()->with('success', 'Image supprimée avec succès.');
+    }
+
+     public function reassign(Request $request, Intervention $intervention)
+    {
+        $this->authorize('reassign', $intervention);
+
+        $validated = $request->validate([
+            'technician_id' => 'required|exists:users,id',
+        ]);
+
+        $intervention->update([
+            'technician_id' => $validated['technician_id'],
+        ]);
+
+        return redirect()->route('interventions.show', $intervention)
+                        ->with('success', 'Technicien réassigné avec succès.');
     }
 }

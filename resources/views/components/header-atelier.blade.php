@@ -52,7 +52,7 @@ $userRoleColor = match($role) {
 
                         {{-- ADMIN --}}
                         @if($role === 'admin')
-                            <a href="{{ route('admin.interventions.index') }}" class="block px-4 py-3 hover:bg-gray-100">Toutes les interventions</a>
+                            <a href="{{ route('admin.dashboard') }}" class="block px-4 py-3 hover:bg-gray-100">Toutes les interventions</a>
                             <a href="{{ route('interventions.create') }}" class="block px-4 py-3 hover:bg-gray-100">Créer une intervention</a>
 
                             {{-- Liens utilisateurs filtrés --}}

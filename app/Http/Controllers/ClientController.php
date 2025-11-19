@@ -17,9 +17,12 @@ class ClientController extends Controller
 
         $client = Client::where('user_id', $user->id)->first();
 
-        $interventions = $client
-            ? Intervention::where('client_id', $client->id)->get()
-            : collect();
+        if (!$client) {
+            return redirect()->route('homepage')->with('error', 'Client non trouvé.');
+        }
+
+       $interventions = $client->interventions()->get();
+
 
         return view('client.index', compact('user', 'client', 'interventions'));
     }

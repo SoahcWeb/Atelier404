@@ -54,12 +54,12 @@
                                         <td class="p-3 font-medium">{{ $intervention->device_type }}</td>
                                         <td class="p-3">{{ $intervention->status->value ?? $intervention->status }}</td>
                                         <td class="p-3 flex flex-wrap gap-2">
-                                            @foreach($intervention->images as $image)
+                                            {{-- @foreach($intervention->images as $image)
                                                 <a href="{{ asset('storage/'.$image->path) }}" target="_blank">
                                                     <img src="{{ asset('storage/'.$image->thumbnail_path ?? $image->path) }}"
                                                          class="w-20 h-20 object-cover border rounded">
                                                 </a>
-                                            @endforeach
+                                            @endforeach --}}
                                         </td>
                                         <td class="p-3">
                                             <a href="{{ route('interventions.show', $intervention->id) }}"

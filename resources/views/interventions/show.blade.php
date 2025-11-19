@@ -27,6 +27,53 @@
             <li><strong>Date :</strong> {{ $intervention->created_at->format('d/m/Y') }}</li>
         </ul>
     </div>
+     {{-- BOUTONS --}}
+            <div class="mt-10 flex flex-wrap gap-4">
+
+                {{-- 🔐 Autorisé pour admin + technicien assigné (SEULE action pour technicien) --}}
+                @can('update', $intervention)
+                    <a href="{{ route('interventions.edit', $intervention) }}"
+                        class="bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 transition">
+                        Modifier
+                    </a>
+                @endcan
+
+                {{-- 🔐 Seulement admin : SUPPRIMER --}}
+                @can('delete', $intervention)
+                    <form action="{{ route('interventions.destroy', $intervention) }}" method="POST"
+                        onsubmit="return confirm('Voulez-vous vraiment supprimer cette intervention ?');">
+                        @csrf
+                        @method('DELETE')
+
+                        <button class="bg-red-600 text-white px-5 py-2.5 rounded-lg hover:bg-red-700 transition">
+                            Supprimer
+                        </button>
+                    </form>
+                @endcan
+
+                {{-- 🔐 Seulement admin : REASSIGNER --}}
+                @can('reassign', $intervention)
+                    <form action="{{ route('interventions.reassign', $intervention) }}" method="POST"
+                          class="flex items-center gap-3">
+                        @csrf
+
+                        <select name="technician_id" class="border p-2 rounded-lg">
+                            @foreach(\App\Models\User::where('role_id', 2)->get() as $technician)
+                                <option value="{{ $technician->id }}"
+                                    {{ $intervention->technician_id === $technician->id ? 'selected' : '' }}>
+                                    {{ $technician->name }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        <button type="submit"
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition">
+                            Réassigner
+                        </button>
+                    </form>
+                @endcan
+            </div>
+
 
     <!-- Images -->
     @if($intervention->images->isNotEmpty())
@@ -62,9 +109,23 @@
     @endif
 
     <!-- Bouton retour dynamique -->
-    <a href="{{ route('interventions.dashboard') }}"
-       class="inline-block bg-indigo-600 text-white px-5 py-3 rounded-lg hover:bg-indigo-700 transition">
-        ← Retour au Tableau
-    </a>
+    @php $user = auth()->user(); @endphp
+    @if ($user->role->name === 'admin')
+        <a href="{{ route('admin.dashboard') }}"
+        class="inline-block bg-indigo-600 text-white px-5 py-3 rounded-lg hover:bg-indigo-700 transition">
+            ← Retour au Tableau
+        </a>
+    @elseif ($user->role->name === 'technitian')
+        <a href="{{ route('interventions.dashboard') }}"
+        class="inline-block bg-indigo-600 text-white px-5 py-3 rounded-lg hover:bg-indigo-700 transition">
+            ← Retour au Tableau
+        </a>
+    @else
+        <a href="{{ route('client.dashboard') }}"
+        class="inline-block bg-indigo-600 text-white px-5 py-3 rounded-lg hover:bg-indigo-700 transition">
+            ← Retour au Tableau
+        </a>
+    @endif
+
 
 </x-app-layout>

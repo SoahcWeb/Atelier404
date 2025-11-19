@@ -62,8 +62,8 @@ class InterventionController extends Controller
         $client = Client::updateOrCreate(
             ['user_id' => $user->id],
             [
-                'name'    => $nomClient,
-                'email'   => $emailClient,
+                // 'name'    => $nomClient,
+                // 'email'   => $emailClient,
                 'phone'   => $validated['telephone'] ?? null,
                 'address' => $validated['address'] ?? null,
             ]

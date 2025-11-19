@@ -9,6 +9,7 @@ use App\Models\Intervention;
 use Database\Seeders\RolesTableSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Support\Facades\Hash;
+use Database\Seeders\ImageSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,6 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call(RolesTableSeeder::class);
         $this->call(UserSeeder::class);
         $this->call(InterventionSeeder::class);
+        $this->call(ImageSeeder::class);
     }
 
 }

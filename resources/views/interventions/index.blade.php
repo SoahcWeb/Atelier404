@@ -39,32 +39,6 @@
                         </span>
                     </td>
 
-                    {{-- <td class="p-2 flex flex-wrap">
-                        @foreach($intervention->images->take(3) as $img)
-                            <div class="relative m-2">
-                                <a href="{{ asset('storage/' . $img->path) }}" target="_blank">
-                                    <img src="{{ asset('storage/' . ($img->thumbnail_path ?? $img->path)) }}"
-                                         alt="Image intervention"
-                                         class="w-24 h-auto rounded border">
-                                </a>
-
-                                @if($user->role->name === 'admin' || $user->role->name === 'technician')
-                                <form action="{{ route('interventions.images.destroy', $img->id) }}"
-                                      method="POST"
-                                      class="absolute top-0 right-0">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                            onclick="return confirm('Supprimer cette image ?');"
-                                            class="bg-red-600 text-white rounded-full w-5 h-5 text-center leading-5 hover:bg-red-700">
-                                        ×
-                                    </button>
-                                </form>
-                                @endif
-                            </div>
-                        @endforeach
-                    </td> --}}
-
                     @if ($user->role->name === 'admin')
                         <td class="p-2">
                             {{ $intervention->technician->name ?? 'Non assigné' }}

@@ -1,4 +1,5 @@
 <x-app-layout title="Détail de l'Intervention">
+    @php $user = auth()->user(); @endphp
 
     <h1 class="text-2xl font-bold text-indigo-700 mb-6">
         Intervention : {{ $intervention->device_type }}
@@ -109,23 +110,25 @@
     @endif
 
     <!-- Bouton retour dynamique -->
-    @php $user = auth()->user(); @endphp
-    @if ($user->role->name === 'admin')
-        <a href="{{ route('admin.dashboard') }}"
-        class="inline-block bg-indigo-600 text-white px-5 py-3 rounded-lg hover:bg-indigo-700 transition">
-            ← Retour au Tableau
-        </a>
-    @elseif ($user->role->name === 'technitian')
-        <a href="{{ route('interventions.dashboard') }}"
-        class="inline-block bg-indigo-600 text-white px-5 py-3 rounded-lg hover:bg-indigo-700 transition">
-            ← Retour au Tableau
-        </a>
-    @else
-        <a href="{{ route('client.dashboard') }}"
-        class="inline-block bg-indigo-600 text-white px-5 py-3 rounded-lg hover:bg-indigo-700 transition">
-            ← Retour au Tableau
-        </a>
-    @endif
+    <div class="mt-6 mb-3">
+        
+        @if ($user->role->name === 'admin')
+            <a href="{{ route('admin.dashboard') }}"
+            class="inline-block bg-indigo-600 text-white px-5 py-3 rounded-lg hover:bg-indigo-700 transition">
+                ← Retour au Tableau
+            </a>
+        @elseif ($user->role->name === 'technitian')
+            <a href="{{ route('interventions.dashboard') }}"
+            class="inline-block bg-indigo-600 text-white px-5 py-3 rounded-lg hover:bg-indigo-700 transition">
+                ← Retour au Tableau
+            </a>
+        @else
+            <a href="{{ route('client.dashboard') }}"
+            class="inline-block bg-indigo-600 text-white px-5 py-3 rounded-lg hover:bg-indigo-700 transition">
+                ← Retour au Tableau
+            </a>
+        @endif
+    </div>
 
 
 </x-app-layout>

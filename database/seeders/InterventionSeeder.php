@@ -29,17 +29,30 @@ class InterventionSeeder extends Seeder
         dd('No hay usuarios con rol Client');
     }
 
-    $technicianIds = User::where('role_id', $technicianRoleId)->pluck('id')->toArray();
+    $technicians = User::where('role_id', $technicianRoleId)->get();
 
-    if (empty($technicianIds)) {
+    if (empty($technicians)) {
             dd('No hay técnicos disponibles para asignar intervenciones');
         }
 
-    foreach ($clients as $client) {
-            Intervention::factory(rand(1, 3))->create([
-                'client_id' => $client->client->id,
-                'technician_id' => $technicianIds[array_rand($technicianIds)],
-            ]);
+    $techIndex = 0; // Para repartir en orden
+
+        foreach ($clients as $client) {
+            $numInterventions = rand(1, 3);
+
+            for ($i = 0; $i < $numInterventions; $i++) {
+
+                // Selecciona el técnico en orden (round-robin)
+                $technician = $technicians[$techIndex];
+
+                Intervention::factory()->create([
+                    'client_id'     => $client->client->id,
+                    'technician_id' => $technician->id,
+                ]);
+
+                // Avanza al siguiente técnico
+                $techIndex = ($techIndex + 1) % $technicians->count();
+            }
         }
     }
 }

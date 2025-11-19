@@ -13,7 +13,7 @@ class DashboardController extends Controller
 
         if ($user->role->name === 'admin') {
             // Tous les interventions pour l'admin
-            $interventions = Intervention::with(['client', 'technician', 'images'])
+            $interventions = Intervention::with(['client.user', 'technician', 'images'])
                 ->latest()
                 ->get();
 
@@ -23,7 +23,7 @@ class DashboardController extends Controller
         elseif ($user->role->name === 'technician') {
             // Interventions assignées au technicien connecté
             $interventions = $user->interventionsAsTechnician()
-                ->with(['client', 'technician', 'images'])
+                ->with(['client.user', 'technician', 'images'])
                 ->latest()
                 ->get();
 
